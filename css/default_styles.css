@@ -1,0 +1,26 @@
+.shopthanksButton,
+.shopthanksButton:active,
+.shopthanksButton:focus,
+.shopthanksButton:visited {
+  background: #fff;
+  border: 1px solid #4582a9;
+  border-radius: 4px;
+  color: #4582a9;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  font-style: normal;
+  height: auto;
+  line-height: 20px;
+  margin: 5px 0px 5px 10px;
+  padding: 5px 15px;
+  text-decoration: none;
+  text-align: center;
+  width: auto;
+}
+.shopthanksButton:hover {
+  background: #eee;
+}
+.uploadHeader > h2 {
+  color: #4582a9;
+}

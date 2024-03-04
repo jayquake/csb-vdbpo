@@ -1,0 +1,48 @@
+#cartQtyBox{vertical-align:top;}
+#divPlaceOrderBody{padding:0px 10px 0px 0px; z-index:1; width:100%;}
+html>/**/body #divPlaceOrderBody{}
+#divHeaders{display:none }
+
+#divErrors{position:absolute; top:60%;left:45%; width:340px; font-size:10pt; font-family:verdana; color:#FF0000; font-weight:bold; background-color:#FFFFFF; border:solid 2px red; padding:8px 8px 8px 8px; text-align:center; z-index:20;}
+#spKitchenNoteHeader{font-size:8pt; font-family:verdana; cursor:pointer}
+#divAjaxLoader{position:absolute; left:55%; top:45%}
+
+.fieldset {width:98%;	display:block;border:1px dotted #666666;padding:4px;margin-bottom:15px;	line-height:50px;	font-style: normal;font-size: 12px;font-family: Verdana;font-weight: normal;text-align: center;}
+.legend {font-size:10px; font-weight:bold; letter-spacing:4px;color: #000000;margin:0 0 5px 10px; height: 18px;line-height: 18px;width:157px; border: 1px solid #666666;padding: 0 5px; background :url(/catertrax_images/cat_bkg.jpg);}
+.buttons{color:#000000; font-size : 8pt;font-family: Verdana;font-weight:bold;text-decoration:none;border:1px outset #F0F0F0;background:url(/catertrax_images/cat_bkg2.jpg); padding:3px 3px; text-align:center; cursor:pointer;}
+ .omitted {font:bold 10pt Verdana; background=#ff9999; border: 1px solid #666666; width: 98%; padding: 5px;}
+ 
+ .sectionHeader,.sectionHeaderOn{height:58px; font-weight:bold; font-size:18pt; cursor:pointer; border:solid 1px #727272;}
+ .sectionHeader{background:url(/catertrax_images/cat_bkg2.jpg); width:95%;}
+ .sectionHeaderOn{background:url(/catertrax_images/singlePageCheckOutHeader.png); width:95%;}
+ 
+ .sectionArrowLeft,.sectionArrowLeftOn{width:5%; height:38px; margin:0px 5px 0px 10px; float:left}
+ .sectionArrowRight,.sectionArrowRightOn{width:5%; height:38px; margin:0px 10px 0px 5px; float:right}
+ .sectionArrowLeft{background:url(/catertrax_images/singlePageCheckOutArrowShow.png) no-repeat left; }
+ .sectionArrowLeftOn{background:url(/catertrax_images/singlePageCheckOutArrowHide.png) no-repeat left;}
+ .sectionArrowRight{background:url(/catertrax_images/singlePageCheckOutArrowShow.png) no-repeat right;}
+ .sectionArrowRightOn{background:url(/catertrax_images/singlePageCheckOutArrowHide.png) no-repeat right;}
+ 
+ .sectionHeading,.sectionHeadingOn{text-align:center; padding:5xp 0px 0px 0px; font-family:Arial; float:left;}
+ html>/**/body .sectionHeading{}
+ html>/**/body .sectionHeadingOn{}
+ .sectionHeading{color:#999999;width:80%;}
+ .sectionHeadingOn{color:#FFFFFF;width:80%;}
+ 
+ .stepDiv{margin-bottom:5px;}
+ .stepDivBody{padding:5px 5px 0px 5px;border-left:solid 1px #999999; border-right:solid 1px #999999; border-bottom:solid 1px #999999; width:535px;}
+ .spacer{height:-1px; padding:2px}
+ 
+ span.menu{ font-family:Verdana; font-weight:bold; border:1px outset #F0F0F0; background:url('/catertrax_images/cat_bkg2.jpg'); 
+ width:100%; padding:3px 3px; text-align:center; text-valign:middle; cursor:pointer}
+ 
+span.weekLink{ font-size:8pt; font-family: Verdana; font-weight:bold; cursor:pointer}
+span.weekLink:hover{ font-size:8pt; font-family: Verdana; font-weight:bold; cursor:pointer}
+td.weekLink{color:#000000; font-size:8pt; font-family: Verdana; font-weight:bold; cursor:pointer}
+
+.spClose{color:#000000; font-family:Verdana; font-weight:bold; border:1px outset #F0F0F0; background:url('/catertrax_images/cat_bkg2.jpg'); 
+ padding:3px 3px; text-align:center; text-valign:middle; cursor:pointer; clear:both}
+ 
+.frmCaption{font-size:8pt; font-family:Verdana;font-weight:bold; padding-left:3; padding-right:3}
+.frmCaptionRQ{font-size:8pt; font-family:Verdana;font-weight:bold;padding-left:3; padding-right:3}
+.frmCaptionRQVal{font-size:8pt; font-family:Verdana;font-weight:bold;padding-left:3; padding-right:3;color:Red}

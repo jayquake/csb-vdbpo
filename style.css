@@ -1,0 +1,28 @@
+#form {
+  width: 75%;
+}
+
+.spacing {
+  padding-top: 5%;
+}
+
+@media only screen and (max-width: 600px) {
+  #form {
+    width: 100%;
+  }
+}
+
+.modal-content {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  pointer-events: auto;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  outline: 0;
+  margin: inherit;
+  left: 12em;
+}

@@ -1,0 +1,3516 @@
+<html class="no-js js-focus-visible" lang="en" data-js-focus-visible=""><head><meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  <link rel="stylesheet" type="text/css" href="/css/SinglePageProcessOrder.css"><link rel="stylesheet" type="text/css" href="css/honey.css"><link rel="stylesheet" type="text/css" href="css/default_styles.css">
+  <style type="text/css">
+    .nothing { display: none; }
+    #ordersContent{float:left;text-align:left;background-color: #f00f0;border: 3px solid #bbbbbb;position:relative;}
+    
+    .tablesorter .even {	background-color: #F0F0F0;}
+    .tablesorter .odd {	background-color: #E5E5E5;}
+    .tablesorter .empty {	border-top: 1px;	border-bottom: 1px;}
+    .tablesorter .search {background-color: #FAFAE5;}
+    .tablesorter .highlight {background-color: #3D3D3D;font-family: verdana;font-size : 10pt;}
+    .tablesorter .header {background-image: url(/CaterTrax_images/header-bg.png);background-repeat: no-repeat;background-position: -5px 0px;font-family: verdana;font-size : 10pt;padding-left: 25px;	height: 25px;}
+    .tablesorter .headerSortUp {background-image: url(/CaterTrax_images/header-asc.png);background-repeat: no-repeat;background-position: -5px 0px;	padding-left: 25px;	height: 25px;}
+    .tablesorter .headerSortDown {background-image: url(/CaterTrax_images/header-desc.png);background-repeat: no-repeat;background-position: -5px 0px;padding-left: 25px;height: 25px;}
+  </style>
+  <script async="" src="//cdn.raygun.io/raygun4js/raygun.min.js"></script><script type="text/javascript" src="/scripts/jquery-safe-loader.js"></script><script type="text/javascript" src="/scripts/ajah.js"></script>
+<style type="text/css">
+  table.invoiceSectionHeader { color: #000000 !important; width: 100% !important; border-collapse: collapse !important; border-style: none !important; font-size: 12px !important; }
+  td.invoiceSectionHeaderTDLeft { color: #666666 !important; border-style: none !important; background-color: #CCCCCC !important; padding-left: 2px !important; width: 50% !important; padding-right: 20px !important; background-image: url(Catertrax_Images/prod_tr.gif) !important; background-repeat: no-repeat !important; background-position: top right !important; }
+  td.invoiceSectionHeaderTDRight { border-style: none !important; background-color: #FFFFFF !important; width: 50% !important; }
+  table.invoiceSection, table.adminInvoiceSection { color: #000000 !important; width: 100% !important; border-collapse: collapse !important; border-width: 2px !important; border-style: solid !important; border-color: #CCCCCC !important; }
+  table.invoiceSection td, table.adminInvoiceSection td { border-width: 2px !important; border-style: solid !important; border-color: #CCCCCC !important; background-color: #F0F0F0 !important; }
+  table.invoiceSectionHighlight, table.adminInvoiceSectionHighlight { color: #000000 !important; width: 100% !important; border-collapse: collapse !important; border-width: 2px !important; border-style: solid !important; border-color: #FFFF00 !important }
+  table.invoiceSectionHighlight td, table.adminInvoiceSectionHighlight td { border-width: 2px !important; border-style: solid !important; border-color: #FFFF00 !important; background-color: #F0F0F0 !important; }
+  
+  div.cartContentsDIV table { color: #000000 !important; width: 100% !important; border-collapse: collapse !important; border-width: 2px !important; border-style: solid !important; border-color: #CCCCCC !important; }
+  div.cartContentsDIV td { border-width: 2px !important; border-style: solid !important; border-color: #CCCCCC !important; background-color: #F0F0F0 !important; }
+  div.cartContentsDIV tr.cartContentsHeaderTR td { color: #666666 !important; border-style: none !important; background-color: #CCCCCC !important; padding-left: 1px !important; background-image: none; }
+</style>
+
+
+<script>
+var menuType = 'menu'
+
+//function used to capture clicks out-side of drop menus in navbar
+var bodyClick = function(e){
+
+  var hitLogin = false;
+
+  if($('#accLoginWin').length != 0) {
+    if(e.target.id == 'accLoginWin' || $.contains($('#accLoginWin')[0], e.target))
+      hitLogin = true;
+  }
+
+  var hitCart = false;
+
+  if($('#shoppingWin').length != 0) {
+    if(e.target.id == 'shoppingWin' || $.contains($('#shoppingWin')[0], e.target))
+      hitCart = true;
+  }
+
+  var hitSearch = false;
+
+  if($('#searchDropWin').length != 0) {
+    if(e.target.id == 'searchDropWin' || $.contains($('#searchDropWin')[0], e.target))
+      hitSearch = true;
+  }
+  
+  //console.log(hitLogin + " |LOGIN : CART| " + hitCart);
+
+  if(!hitLogin && !hitCart && !hitSearch) {
+    $('#accLoginWin').fadeOut(300);
+    $('#accLoginButton').removeClass('active');
+    $('#shoppingWin').fadeOut(300);
+    $('#shoppingButton').removeClass('active');
+    $('#toolBar').removeClass('open');
+    $('#searchDropWin').fadeOut(300);
+    $('#searchBar').removeClass('active');
+    $(document.body).off( "click.toolbar", "**" );
+  }
+}
+
+
+//function to validate search and submit to menu.asp or 
+var validateSearch = function(){
+
+  $('#searchBar').addClass('active');
+  
+  var keyword = $('#navkeyword').val();
+  var radioVal = $("input:radio[name ='catgrp']:checked").val();
+      var affval = $("input:radio[name ='catgrp']:checked").attr("data-affid");
+  var selectVal = $("#catgrp").val();
+  var catVal = "";
+  var searchPath = "";
+
+  //no search word
+  if( keyword == '' || keyword == 'Search' ){
+    $('#searchDropWin').fadeIn(300);
+    $('#searchDropWin .error').html('<div class="ctx-error">Search word required.</div>');
+    return false;
+  }
+  
+  if ($('#searchDropWin').hasClass('phase1')) {
+
+    //phase1 aramark experience
+    return true;
+  }
+  else if ($('#searchDropWin').hasClass('cats')) {
+
+    //cat group needed
+    if ( menuType == 'menunavigation' || menuType == 'product' ) {
+      if ( radioVal  == undefined ){
+        $('#searchDropWin').fadeIn(300);
+        $('#searchDropWin .error').html('<div class="ctx-error">Menu selection required.</div>');
+        return false;
+      } 
+      catVal = radioVal;
+              if (affval == "NOAFF"){
+                  affval ="";
+          searchPath = "/" + menuType + ".asp#c:" + catVal + "|s:" + keyword;
+              }else
+              {   
+                  searchPath = "/" + menuType + ".asp#c:" + catVal + "|s:" + keyword + "|a:" + affval;
+              }
+    } 
+    else {
+      if ( selectVal == undefined || selectVal == 0 ){
+        $('#searchDropWin').fadeIn(300);
+        $('#searchDropWin .error').html('<div class="ctx-error">Menu selection required.</div>');
+        return false;
+      } 
+      catVal = selectVal;
+      searchPath = "/" + menuType + ".asp#c:" + catVal + "|s:" + keyword;
+    }
+  } 
+  else {
+
+    //only search word no cat group
+          affval ="";
+    searchPath = "/" + menuType + ".asp#s:" + keyword;
+  }
+  
+  //OK lets go
+  $('#searchBar').removeClass('active');
+  $('#searchDropWin').fadeOut(300);
+  $('#searchDropWin .error').html('');
+
+  //redirect to menu page with search parameters or process parameters if on menu
+  if ( window.location.href.toLowerCase().indexOf(menuType + '.asp') != -1 ) {
+    setHash('s', keyword);
+          if (typeof(affval) != "undefined"){ if (affval.length > 0)
+      setHash("a", affval);
+    }
+    if (catVal.length > 0)
+      setHash('c', catVal);
+    processHash();
+      reloadHash();
+      $('#navkeyword').val('Search');
+  }
+  else {
+    //console.log(searchPath);
+    window.location = searchPath;
+  }
+  return false;
+}
+
+$(document).ready(function($) {
+  //assign actions to login button
+  $('#accLoginButton').on({
+    click:function(e){
+      e.stopPropagation();
+
+      if ($('#accLoginButton').hasClass('active')) {
+
+        $(document.body).off( "click.toolbar", "**" );
+
+        $('#accLoginWin').fadeOut(300);
+        $('#accLoginButton').removeClass('active');
+        $('#shoppingWin').fadeOut(300);
+        $('#shoppingButton').removeClass('active');
+        $('#toolBar').removeClass('open');
+        $('#searchDropWin').fadeOut(300);
+        $('#searchBar').removeClass('active');
+
+      } else {
+
+        $(document.body).on('click.toolbar', bodyClick);
+
+        $('#accLoginWin').fadeIn(300);
+        $('#accLoginButton').addClass('active');
+        $('#shoppingWin').fadeOut(300);
+        $('#shoppingButton').removeClass('active');
+        $('#toolBar').addClass('open');
+        $('#searchDropWin').fadeOut(300);
+        $('#searchBar').removeClass('active');
+
+      }
+    }
+  });
+
+  //assign actions to mini cart button
+  $('#shoppingButton').on({
+    click:function(e){
+      e.stopPropagation();
+
+      if ($('#shoppingButton').hasClass('active')) {
+
+        $(document.body).off( "click.toolbar", "**" );
+
+        $('#shoppingWin').fadeOut(300);
+        $('#shoppingButton').removeClass('active');
+        $('#accLoginWin').fadeOut(300);
+        $('#accLoginButton').removeClass('active');
+        $('#toolBar').removeClass('open');
+        $('#searchDropWin').fadeOut(300);
+        $('#searchBar').removeClass('active');
+
+      } else {
+
+        $(document.body).on('click.toolbar', bodyClick);
+
+        $('#shoppingWin').fadeIn(300);
+        $('#shoppingButton').addClass('active');
+        $('#accLoginWin').fadeOut(300);
+        $('#accLoginButton').removeClass('active');
+        $('#toolBar').addClass('open');
+        $('#searchDropWin').fadeOut(300);
+        $('#searchBar').removeClass('active');
+
+      }
+    }
+  });
+
+  //assign actions to search field
+  $('#navkeyword').on({
+    click:function(e){
+      e.stopPropagation();
+
+      if (!$('#searchDropWin').hasClass('empty')) {
+        $('#searchDropWin').fadeIn(300);
+        $('#searchBar').addClass('active');
+        $(document.body).on('click.toolbar', bodyClick);
+      }
+
+      $('#shoppingWin').fadeOut(300);
+      $('#shoppingButton').removeClass('active');
+      $('#accLoginWin').fadeOut(300);
+      $('#accLoginButton').removeClass('active');
+      $('#toolBar').removeClass('open');
+
+      this.value='';
+      //console.log(':)');
+    },
+    blur:function(e){
+      e.stopPropagation();
+      if(this.value=='') this.value='Search';
+      //console.log(':(');
+    }
+  });
+  /*
+  $('#searchFormButton').on({
+    click:function(e){
+      e.stopPropagation();
+      document.forms["searchNavForm"].submit();
+    }
+  });*/
+
+
+menuType = 'product';
+
+
+});
+
+</script><script id="takeout-modal-template" type="text/x-handlebars-template">
+  <div id="TakeoutModal_Title">
+      {{#if isGroupOrder}}
+          {{#unless newOrder}}
+              <a class="CloseModal" title="Close" onclick='$.modal.close()'></a>
+          {{/unless}}
+          <h1>Group Order Details</h1>
+      {{else}}
+          <h1>Order Details</h1>
+      {{/if}}
+  </div>
+  <div id="TakeoutModal_Message">{{ message }}</div>
+  {{#if isGroupOrder}}
+      {{#if maxparticipants}}
+          <div id="TakeoutModal_GroupOrder_MaxParticipantsMessage">Include up to {{maxparticipants}} participants on this order.</div>
+      {{/if}}
+      <div id="GroupOrderModal_Name">       
+          <div id="GroupOrderModal_Name_Label">* Order Name (40 characters max)</div>
+          <div id="GroupOrderModal_Name_Input">
+              <input type='text' maxlength='40' name='Order Name'
+              {{#if orderFulfillmentTimeSlot}}
+                  oninput='TakeoutModal.validateOrderName(this.value,true)'
+              {{else}}
+                  oninput='TakeoutModal.validateOrderName(this.value,false)'
+              {{/if}}
+                   value='{{GroupOrderEventName}}'/>
+          </div>
+          <div id="GroupOrderModal_InvalidNameMessage" style="display:none;">Order Name must be between 1 and 40 characters long.</div>        
+      </div>
+  {{/if}}
+  <div id="TakeoutModal_FulfillmentMethods">
+      {{#checkIfLengthEquals fulfillmentMethods 1}}
+          {{#each fulfillmentMethods}}
+          <label>
+              <input type="radio" name="fulfillmentMethods" value="{{id}}" checked> {{fulfillmentMethod}}
+              <span class="checkmark"></span>
+          </label>
+          {{/each}}
+      {{else}}
+          {{#checked orderFulfillmentMethodID}}
+              {{#each fulfillmentMethods}}
+                  <label>
+                      <input type="radio" name="fulfillmentMethods" value="{{id}}" onchange="TakeoutModal.update({orderFulfillmentMethodID: event.target.value, GroupOrderEventName: $('#GroupOrderModal_Name_Input input').val()})"> {{fulfillmentMethod}}
+                      <span class="checkmark"></span>
+                  </label>
+              {{/each}}
+          {{/checked}}
+      {{/checkIfLengthEquals}}
+  </div>
+  {{#if orderFulfillmentMethodID}}
+  <div id="TakeoutModal_FulfillmentDateSelection">
+      <div>* Date</div>
+      <input id='TakeoutModal_DateAvailability' type='text' value='{{orderFulfillmentDate}}' readonly/>
+      <span id='TakeoutModal_DateAvailabilityIcon' class='fas fa-calendar-alt'>
+  </div>
+  {{/if}}
+  {{#if orderFulfillmentDate }}
+  <div id="TakeoutModal_FulfillmentTimeSlotSelection">
+      <div>* Time</div>
+      {{#if noTimeSlotsAvailable}}
+      <div id='AllTimeSlotsAreUnavailableMessage'>
+          <i class='WarningIcon fas fa-exclamation-triangle'></i>
+          There are no times available based on your order settings.
+      </div>
+      {{/if}}
+      <div class='TimeSlots'>
+      {{#each timeSlots}}
+          {{#ifTimeSlotUnavailable Blocked Expired}}
+              <div class='TimeSlot unavailable'>
+                  <div class='TimeSlot_Time'>{{ Time }}</div>
+                  <div class='TimeSlot_ExpirationText'>This time is currently unavailable.</div>
+              </div>
+          {{else}}
+              {{#ifMobile}}
+                  <div 
+                  {{#ifEquals ../orderFulfillmentTimeSlot Time}}
+                      class='TimeSlot selected' 
+                      onclick='TakeoutModal.mobilePropogate({orderFulfillmentTimeSlot: "{{ Time }}"})'
+                  {{else}}
+                      class='TimeSlot unselected' 
+                      onclick='TakeoutModal.update({orderFulfillmentTimeSlot: "{{ Time }}"})'
+                  {{/ifEquals}}
+                  >
+                      <div class='TimeSlot_Time'>{{ Time }}</div>
+                  {{#ifLessThan TimeRemaining 31}}
+                      <div class='TimeSlot_ExpirationText expiring-soon'>{{ ExpirationText }}</div>
+                      <div class='TimeSlot_TimeRemaining expiring-soon'>
+                          <i class='WarningIcon fas fa-exclamation-triangle'></i>
+                          {{ TimeRemaining }} Minutes Remaining
+                      </div>
+                  {{else}}
+                      <div class='TimeSlot_ExpirationText'>{{ ExpirationText }}</div>
+                  {{/ifLessThan}}
+                  </div>
+              {{else}}
+                  <div 
+                  {{#ifEquals ../orderFulfillmentTimeSlot Time}}
+                      class='TimeSlot selected' 
+                  {{else}}
+                      class='TimeSlot' 
+                      onclick='TakeoutModal.update({orderFulfillmentTimeSlot: "{{ Time }}"})'
+                  {{/ifEquals}}
+                  >
+                      <div class='TimeSlot_Time'>{{ Time }}</div>
+                  {{#ifLessThan TimeRemaining 31}}
+                      <div class='TimeSlot_ExpirationText expiring-soon'>{{ ExpirationText }}</div>
+                      <div class='TimeSlot_TimeRemaining expiring-soon'>
+                          <i class='WarningIcon fas fa-exclamation-triangle'></i>
+                          {{ TimeRemaining }} Minutes Remaining
+                      </div>
+                  {{else}}
+                      <div class='TimeSlot_ExpirationText'>{{ ExpirationText }}</div>
+                  {{/ifLessThan}}
+                  </div>
+              {{/ifMobile}}
+          {{/ifTimeSlotUnavailable}}
+      {{/each}}
+      </div>
+  </div>
+  {{/if}}
+
+  {{#if clearCartMsg}}
+      <div id="TakeoutModal_ClearCartMsg">{{clearCartMsg}}</div>
+  {{/if}}
+
+  <div id="TakeoutModal_Actions">
+      <div id="TakeoutModal_Cancel" onclick='$.modal.close()'>Cancel</div>
+      {{#if newOrder}}
+          <div 
+              id="TakeoutModal_Create"
+              {{#if orderFulfillmentTimeSlot}}
+                  {{#if isGroupOrder}}
+                      {{#if GroupOrderEventName}}
+                          onclick='TakeoutModal.createOrder(true)'
+                      {{else}}
+                          class="disabled"
+                      {{/if}}
+                  {{else}}
+                      onclick='TakeoutModal.createOrder(false)'
+                  {{/if}}
+              {{else}}
+                  class="disabled"
+              {{/if}}
+          >Create</div>
+      {{else}}
+          <div 
+              id="TakeoutModal_Update"
+              {{#ifAllowedToUpdate orderFulfillmentTimeSlot orderFulfillmentTimeSlotSelectedHasExpired}}
+                  onclick='TakeoutModal.updateOrder()'
+              {{else}}
+                  class="disabled"
+              {{/ifAllowedToUpdate}}
+          >Update</div>
+      {{/if}}
+  </div>
+</script>
+
+
+<script type="text/javascript">
+var orderCG = '';
+var menuCG = '';
+var orderAff = '';
+var menuAff = '';
+if (menuAff === ''){
+  menuAff = '';
+}
+
+window.location.hash = (window.location.hash.replace(/%7c/g, '|')).replace(/%7C/g, '|');
+var menuHash = window.location.hash.replace('#','');
+var HashElements = menuHash.split('|');
+
+  $.each(HashElements, function(index,value) {
+      var hashElemtent = value.split(':');
+      
+      if(hashElemtent[0] == "a"){
+          orderAff = hashElemtent[1];
+      }
+  });
+
+  $.each(HashElements, function(index,value) {
+      var hashElemtent = value.split(':');
+      
+      if(hashElemtent[0] == "c"){
+          menuCG = hashElemtent[1];
+      }
+  });
+
+
+var TakeoutModal = {
+  data: {
+      message: '',
+      newOrder: true,
+      fulfillmentMethods: [],
+      orderFulfillmentMethodID: null,
+      orderFulfillmentDate: null,
+      orderFulfillmentTimeSlot: null,
+      orderFulfillmentTimeSlotSelectedHasExpired: null,
+      timeSlots: [],
+      noTimeSlotsAvailable: false,
+      x_DTO_dayoftheweekblock: '',
+      x_DTO_dateblock: '',
+      xblockdaysfuture_DTO: '',
+      clearCartMsg: ''
+  },
+  build: function() {
+      Handlebars.registerHelper('checkIfLengthEquals', function (v1, v2, options) {
+          if (v1.length==v2) {
+              return options.fn(this);
+          }
+          return options.inverse(this);
+      });
+      Handlebars.registerHelper('checked', function(value, options) {
+          var div = document.createElement('div'); // create a container div
+          div.innerHTML = options.fn(this);          // parse content into dom
+          Array.prototype.forEach.call(div.querySelectorAll('input[type=radio]'),function(input) {
+              // if input has value matching supplied value, check it
+              if (input.value == value) input.defaultChecked = true;
+          });
+          return div.innerHTML;
+      });
+      Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+          return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+      });
+      Handlebars.registerHelper('ifBothTrue', function(arg1, arg2, options) {
+          return (arg1 == true) ? options.fn(this) : options.inverse(this);
+      });
+      Handlebars.registerHelper('ifAllowedToUpdate', function(timeslot, expired, options) {
+          return (timeslot && !expired) ? options.fn(this) : options.inverse(this);
+      });
+      Handlebars.registerHelper('ifLessThan', function(v1, v2,  options) {
+          v1 = parseInt(v1);
+          v2 = parseInt(v2);
+          return (v1 < v2) ? options.fn(this) : options.inverse(this);
+      });
+      Handlebars.registerHelper('ifTimeSlotUnavailable', function(blocked, expired,  options) {
+          return (blocked || expired) ? options.fn(this) : options.inverse(this);
+      });
+      Handlebars.registerHelper('ifMobile', function(options) {
+          if (typeof window.ontouchstart === "object") {
+              return options.fn(this);
+          } else {
+              return options.inverse(this);
+          }
+      });
+      var TakeoutModalTemplate = Handlebars.compile(document.getElementById("takeout-modal-template").innerHTML);
+      var html = TakeoutModalTemplate(TakeoutModal.data);
+
+      $('#TakeoutModal').html(html);
+      $.modal(html, {
+          containerId:'TakeoutModal',
+          escClose:true,
+          overlayClose:false,
+          focus:false,
+          onShow : function() {
+              $('body').addClass('noScroll');
+          },
+          onClose: function () {
+              $.modal.close();
+              
+              $('body').removeClass('noScroll');
+          }
+      });
+
+      $("#TakeoutModal_DateAvailability").datepicker({
+          changeMonth: true,
+          changeYear: true,
+          minDate: 0,
+          maxDate: TakeoutModal.configureMaxDate(),
+          beforeShowDay: TakeoutModal.configureDate,
+          onSelect: function(date) {
+              TakeoutModal.update({orderFulfillmentDate: date});
+          },
+          onClose: function (date) {  
+          }
+      });
+
+      $("#TakeoutModal_DateAvailabilityIcon").click(function(event) {
+          $("#TakeoutModal_DateAvailability").focus();
+      });
+
+      $(window).trigger('resize.simplemodal'); 
+      $(".simplemodal-wrap").width("auto");
+      
+      TakeoutModal.timeSlotScroll();
+
+      if (typeof window.ontouchstart === "object" && TakeoutModal.data.orderFulfillmentTimeSlot) {
+          if (TakeoutModal.data.orderFulfillmentTimeSlotSelectedHasExpired) {
+              $( "#selectedDownArrow" ).remove();
+              $( ".unselected" ).show( "drop", { direction: "down" }, 100 ); 
+          } else {
+              $( ".unselected" ).hide( "drop", { direction: "up" }, 100 );
+              $(".selected").append('<div id="selectedDownArrow"/>');
+          }
+      }
+  },
+  fetch: function(isGroupOrder,editLink) {
+      var affiliateID = orderAff;
+      var catGroupID = orderCG;
+      var orderInProgress = !('False' =='True')
+
+      if ((orderInProgress && window.location.href.indexOf('gomenu=1') !== -1 && !editLink) || !orderInProgress) {
+          if (menuAff !== orderAff){
+              affiliateID = menuAff;
+          }
+          if (menuCG !== orderCG){
+              catGroupID = menuCG;
+          }
+      }
+
+      $.ajax({
+          async: false,
+          type: "POST",
+          url: '/ajax_DTO.asp',
+          data: {action:'GetTakeoutModalData',affiliate: affiliateID,catgroup: catGroupID,GroupOrder: isGroupOrder},
+          dataType: 'json',
+          success: function (d) {
+              if (d.result != "false"){
+                  TakeoutModal.data.message = d.DTOModalMessage;
+                  TakeoutModal.data.maxparticipants = d.maxparticipants;
+                  
+                  TakeoutModal.data.fulfillmentMethods = [];
+                  d.fulfillmentMethods.forEach(function(fulfillmentMethod) {
+                      TakeoutModal.data.fulfillmentMethods.push({id: fulfillmentMethod.shipmethodid, fulfillmentMethod:fulfillmentMethod.shipmethod});
+                  });
+                  if (d.fulfillmentMethods.length == 1 && (d.orderFulfillmentMethodID == '' || d.orderFulfillmentMethodID == 0)) {
+                      TakeoutModal.data.orderFulfillmentMethodID = TakeoutModal.data.fulfillmentMethods[0].id;
+                  } else {
+                      TakeoutModal.data.orderFulfillmentMethodID = d.orderFulfillmentMethodID;
+                  }
+                  TakeoutModal.data.orderFulfillmentDate = d.orderFulfillmentDate;
+                  TakeoutModal.data.orderFulfillmentTimeSlot = d.orderFulfillmentTimeSlot;
+                  TakeoutModal.data.newOrder = d.newOrder;
+                  TakeoutModal.data.GroupOrderEventName = d.EventName;
+                  TakeoutModal.data.xblockdaysfuture_DTO = d.xblockdaysfuture_DTO;
+                  TakeoutModal.data.x_DTO_dayoftheweekblock = d.x_DTO_dayoftheweekblock;
+                  TakeoutModal.data.x_DTO_dateblock = d.x_DTO_dateblock;
+                  if (d.hasOwnProperty("timeSlots")) {
+                      TakeoutModal.data.timeSlots = d.timeSlots.DTOTimeSlotSelections;
+                      if (d.orderFulfillmentTimeSlot != '') {
+                          d.timeSlots.DTOTimeSlotSelections.forEach(function(timeSlot) {
+                              if (timeSlot.Time == d.orderFulfillmentTimeSlot && timeSlot.Expired) {
+                                  TakeoutModal.data.orderFulfillmentTimeSlotSelectedHasExpired = true;
+                              }
+                          });
+                      }
+                  }
+                  TakeoutModal.data.isGroupOrder = isGroupOrder;
+                  TakeoutModal.data.clearCartMsg = d.clearCartMsg;
+              }
+          },
+          complete: function() {
+              TakeoutModal.build();
+          },
+          cache: false
+      });
+  },
+  update: function(propsToMerge) {
+      if (propsToMerge.hasOwnProperty("orderFulfillmentDate")){
+          $.extend(TakeoutModal.data,propsToMerge);
+          $.extend(TakeoutModal.data,{orderFulfillmentTimeSlot: ""});
+          TakeoutModal.getDTOTimeSlots(TakeoutModal.data.orderFulfillmentDate);
+      } else if (propsToMerge.hasOwnProperty("orderFulfillmentTimeSlot")) {
+          TakeoutModal.data.timeSlots.forEach(function(timeSlot) {
+              if (timeSlot.Time == propsToMerge.orderFulfillmentTimeSlot && timeSlot.Expired == 'True') {
+                  propsToMerge.orderFulfillmentTimeSlotSelectedHasExpired = true;
+              } else {
+                  propsToMerge.orderFulfillmentTimeSlotSelectedHasExpired = false;
+              }
+          });
+          $.extend(TakeoutModal.data,propsToMerge);
+          var scrollPosition = $('.TimeSlots').scrollTop();
+          TakeoutModal.build();     
+          $('.TimeSlots').scrollTop(scrollPosition);
+      } else {
+          $.extend(TakeoutModal.data,propsToMerge);
+          TakeoutModal.build();
+      }
+  },
+  validateOrderName: function(ordername,abletoenable) {
+      if(ordername.length == 0 || ordername.length > 40){
+          $('#GroupOrderModal_InvalidNameMessage').show();
+          if(!$('#TakeoutModal_Create').hasClass("disabled") || !$('#TakeoutModal_Update').hasClass("disabled")){
+              $('#TakeoutModal_Create').addClass("disabled");
+              $('#TakeoutModal_Create').attr('onclick', "");
+              $('#TakeoutModal_Update').addClass("disabled");
+              $('#TakeoutModal_Update').attr('onclick', "");
+          }
+      } else{
+          $('#GroupOrderModal_InvalidNameMessage').hide();
+          TakeoutModal.data.GroupOrderEventName = $("#GroupOrderModal_Name_Input input").val();
+          if(abletoenable){
+              $('#TakeoutModal_Create').removeClass('disabled');
+              $('#TakeoutModal_Create').attr('onclick', "TakeoutModal.createOrder(true)");
+              $('#TakeoutModal_Update').removeClass('disabled');
+              $('#TakeoutModal_Update').attr('onclick', "TakeoutModal.updateOrder()");
+          }
+      }
+  },
+  mobilePropogate: function(propsToMerge) {
+      if (TakeoutModal.data.orderFulfillmentTimeSlot == propsToMerge.orderFulfillmentTimeSlot ) {
+          if ($('.unselected').is(":hidden")) {
+              $( "#selectedDownArrow" ).remove();
+              $( ".unselected" ).show( "drop", { direction: "down" }, 100 ); 
+          } else {
+              $( ".unselected" ).hide( "drop", { direction: "up" }, 100 );
+              $(".selected").append('<div id="selectedDownArrow"/>');
+          }
+      } else {
+          $( ".unselected" ).hide( "drop", { direction: "up" }, 100 );
+         
+      }
+  },
+  getDTOTimeSlots: function(date) {
+      var affiliateID = orderAff;
+      if ('True' && menuAff !== orderAff ) {
+          affiliateID = menuAff;
+      }
+      $.ajax({
+          async: false,
+          type: "POST",
+          url: '/ajax_DTO.asp',
+          data: {action:'getdtotimeslots',date: date, affid: affiliateID},
+          dataType: 'json',
+          success: function (d) {
+              TakeoutModal.data.timeSlots = d.DTOTimeSlotSelections;
+              TakeoutModal.data.noTimeSlotsAvailable = d.noTimeSlotsAvailable;
+          },
+          complete: function() {
+              TakeoutModal.build();
+          },
+          cache: false
+      });
+  },
+  createOrder: function(createGO) {
+      var orderCleared = false;
+      if(createGO){
+          
+      }
+
+      $.ajax({
+          async: false,
+          type: "POST",
+          url: '/ajax_DTO.asp',
+          data: {
+              action:'createtakeoutorder',
+              orderFulfillmentMethodID: TakeoutModal.data.orderFulfillmentMethodID,
+              orderFulfillmentDate: TakeoutModal.data.orderFulfillmentDate,
+              orderFulfillmentTimeSlot: TakeoutModal.data.orderFulfillmentTimeSlot,
+              CategoryGroup:menuCG,
+              affid:menuAff,
+              GroupOrderEventName: $("#GroupOrderModal_Name_Input input").val()},
+          dataType: 'json',
+          success: function (d) { 
+              var url = window.location.href;
+              if (orderCleared){
+                  
+                  SendGroupOrderCreatedEmail(d.orderid);
+                  
+                  if (url.indexOf('intOrderID=') > -1){
+                      window.location.replace(url.replace('intOrderID=' + '','intOrderID=' + d.orderid));
+                  }else{
+                      url = url.replace('gomenu=1','')
+                      if (window.location.href.toString() == url){
+                          location.reload();
+                      }else{
+                          window.location.replace(url);
+                      }
+                  }
+                  
+              } else {
+                  $.modal.close();
+                  if (d.isGroupOrder == "true"){
+                      SendGroupOrderCreatedEmail(d.orderid);
+                      
+                      url = url.replace('gomenu=1','')
+                      if (window.location.href.toString() == url){
+                          location.reload();
+                      }else{
+                          window.location.replace(url);
+                      }
+                  }else{
+                      UpdateTakeoutAvailabilityCrumb();
+                  }
+              }
+          },
+          complete: function() {
+              $("#pdOrderItemGroupOrderLink").html("");
+          },
+          cache: false
+      });
+  },
+  updateOrder: function() {
+      $.ajax({
+          async: false,
+          type: "POST",
+          url: '/ajax_DTO.asp',
+          data: {
+              action:'updatetakeoutorder',
+              orderFulfillmentMethodID: TakeoutModal.data.orderFulfillmentMethodID,
+              orderFulfillmentDate: TakeoutModal.data.orderFulfillmentDate,
+              orderFulfillmentTimeSlot: TakeoutModal.data.orderFulfillmentTimeSlot,
+              GroupOrderEventName: $("#GroupOrderModal_Name_Input input").val()},
+          dataType: 'json',
+          success: function (d) {
+          },
+          complete: function() {
+              UpdateTakeoutAvailabilityCrumb();
+              $.modal.close();
+          },
+          cache: false
+      });
+  },
+  configureDate: function(date) {
+      var lvl = 0;
+      var enabled = true;
+      var msg = '';
+
+      //if date falls on blocked day of the week
+      var daysOfTheWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+      var x_DTO_dayoftheweekblock = TakeoutModal.data.x_DTO_dayoftheweekblock;
+      if (typeof x_DTO_dayoftheweekblock === 'string') {
+          x_DTO_dayoftheweekblock = x_DTO_dayoftheweekblock.split(',');
+          daysOfTheWeek = daysOfTheWeek.map(function(day) {
+              return x_DTO_dayoftheweekblock.indexOf(day) > -1 ? 'blocked' : 'ok';
+          });
+
+          if (daysOfTheWeek[date.getDay()] === 'blocked') { 
+              lvl = 0;
+              enabled = false;
+              msg = 'This date is unavailable.'
+          }
+      }
+
+      //if date matches date that should be blocked
+      var x_DTO_dateblock = TakeoutModal.data.x_DTO_dateblock;
+      if (typeof x_DTO_dateblock === 'string') {
+          x_DTO_dateblock = x_DTO_dateblock.split(',');
+          if (typeof x_DTO_dateblock ==='object') {
+              x_DTO_dateblock.forEach(function(dateblock) {
+                  var d1 = new Date(date);
+                  var d2 = new Date(dateblock);
+                  if (d1.getMonth() == d2.getMonth() && d1.getDate() == d2.getDate() && d1.getFullYear() == d2.getFullYear()) {
+                      lvl = 0;
+                      enabled = false;
+                      msg = 'this date is blocked';
+                  }
+              });
+          }
+      } 
+      
+
+      return [enabled, 'daytype' + lvl, msg];
+  },
+  configureMaxDate: function() {
+      var xblockdaysfuture_DTO = TakeoutModal.data.xblockdaysfuture_DTO;
+      if (isNaN(xblockdaysfuture_DTO)) {xblockdaysfuture_DTO = 10;}
+      return '+' + parseInt(xblockdaysfuture_DTO) + 'D'
+  },
+  timeSlotScroll: function() {
+      if($('.TimeSlot.selected').length){
+          $('.TimeSlots').scrollTop(($( ".TimeSlot" ).index($(".selected")) * ($(".TimeSlot.selected").outerHeight(false)+15)));
+      } else {
+          $('.TimeSlots').scrollTop(($( ".TimeSlot" ).index($(".TimeSlot").not(".unavailable").first()) * ($(".TimeSlot").first().outerHeight(false)+15)));
+      }
+  }
+};
+
+function SendGroupOrderCreatedEmail(orderid){
+  $.ajax({
+          async: false,
+          type: "POST",
+          url: '/ajax_GroupOrder.asp',
+          data: {
+              action:'SendGroupOrderCreatedEmail',
+              grouporder: orderid,
+          },
+          cache: false
+      });
+}
+
+function BuildTakeoutModal(isGroupOrder,editLink) {
+  if (typeof isGroupOrder === "undefined"){
+      isGroupOrder = false;
+  }
+  if (typeof editLink === "undefined"){
+      editLink = false;
+  }
+
+  if (isGroupOrder){
+      TakeoutModal.fetch(true,editLink);
+  } else{
+      TakeoutModal.fetch(false,editLink);
+  }
+  
+}
+
+</script>
+
+<!--[if lt IE 7 ]><html class="ie ie6 lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7 lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8 no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <!--<![endif]-->
+
+
+<!-- Basic Page Needs
+================================================== -->
+<meta charset="utf-8">
+<title>miSofi Demo Site 2 - Rochester, NY</title>
+<meta name="description" content="CaterTrax Online Ordering">
+<meta name="author" content="CaterTrax Inc.">
+
+<!-- Mobile Specific Metas
+================================================== -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<!-- CSS
+================================================== -->
+<link rel="stylesheet" href="/corp_templates/common-assets/css/normalize.css">
+
+
+
+<!--[if gt IE 8]><!-->
+<link rel="stylesheet" href="/corp_templates/FOHE/Standard/css/skin-responsive.css">
+<!--<![endif]-->
+<!--[if lt IE 9]>
+<link rel="stylesheet" href="/corp_templates/FOHE/Standard/css/skin-ie.css" />
+<![endif]-->
+
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="/corp_templates/common-assets/css/jquery.bxslider.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700" rel="stylesheet" type="text/css">
+
+<!-- Flexible Config Styles
+================================================== -->
+<style>
+.bgColorA { background-color: #3f3f3f; }
+.fontColorA { color: #3f3f3f; }
+
+#FOHEToolbar
+{
+  background: #3f3f3f;
+}
+
+.bgColorB { background-color: #ffffff; }
+.fontColorB { color: #ffffff; }
+
+#FOHEToolbar #ToolbarContainer #SearchLink,
+#FOHEToolbar #ToolbarContainer #AccountLoginLink,
+#FOHEToolbar #ToolbarContainer #GroupOrderLink,
+#FOHEToolbar #ToolbarContainer #MobileMenuLink
+{
+  border-left: 1px solid #ffffff;
+}
+
+#FOHEToolbar #ToolbarContainer #AccountLoginLink
+{
+  border-right: 1px solid #ffffff;
+}
+
+#FOHEToolbar #ToolbarContainer #GroupOrderLink
+{
+  border-right: 1px solid #ffffff;
+}
+
+#FOHEToolbar #ToolbarContainer #MiniCartLink
+{
+  border-right: 1px solid #ffffff;
+}
+
+@media only screen and (max-width: 800px){
+  #FOHEToolbar #ToolbarContainer #MiniCartLink
+  {
+    border: none;
+  }
+}
+
+.bgColorC { background-color: #ffffff; }
+.fontColorC { color: #ffffff; }
+
+#FOHEToolbar,
+#FOHEToolbar #ToolbarContainer #SearchLink .fa.hover,
+#FOHEToolbar #ToolbarContainer #AccountLoginLink .fa.hover,
+#FOHEToolbar #ToolbarContainer #GroupOrderLink .fa.hover,
+#FOHEToolbar #ToolbarContainer #MiniCartLink .fa.hover,
+#FOHEToolbar #ToolbarContainer #MobileMenuLink .fa,
+#FOHEToolbar #ToolbarContainer #MobileMenuLink .fa.hover,
+#FOHEToolbar #ToolbarContainer #MiniCartLink,
+#HeaderNavigation #NavigationLinks li a,
+#CompanyTagline
+{
+  color: #ffffff;
+}
+
+.cartIcon-stack[data-count].hover:after
+{
+  border: 1px solid #ffffff;
+}
+
+.bgColorD { background-color: #5e5e5e; }
+.fontColorD { color: #5e5e5e; }
+
+#FOHEToolbar #ToolbarContainer #SearchLink:hover,
+#FOHEToolbar #ToolbarContainer #AccountLoginLink:hover,
+#FOHEToolbar #ToolbarContainer #MiniCartLink:hover,
+#FOHEToolbar #ToolbarContainer #MobileMenuLink:hover,
+#HeaderNavigation #NavigationLinks li a:hover,
+#HeaderNavigation #moreLink:hover
+{
+  background: #5e5e5e;
+}
+
+
+.bgColorE { background-color: #ffffff; }
+.fontColorE { color: #ffffff; }
+
+#FOHEToolbar #ToolbarContainer #SearchLink .fa,
+#FOHEToolbar #ToolbarContainer #AccountLoginLink .fa,
+#FOHEToolbar #ToolbarContainer #GroupOrderLink .fa,
+#FOHEToolbar #ToolbarContainer #MiniCartLink .fa,
+#MobileMenuLink .fa,
+#FOHEToolbar #ToolbarContainer #MobileMenuLink .fa
+{
+  color: #ffffff;
+}
+
+.cartIcon-stack[data-count]:after
+{
+  border: 1px solid #ffffff;
+}
+
+@media only screen and (max-width: 800px){
+  #DynamicDropDown #DynamicDropDownView #MobileMenuDropDown #MobileMenuNavigationLinks li.hasSubView .fa
+  {
+    color: #ffffff;
+  }
+  
+  .cartIcon-stack[data-count]:after
+  {
+    border: 1px solid #ffffff;
+  }
+}
+
+.bgColorF { background-color: #107c03; }
+.fontColorF { color: #107c03; }
+
+#FOHEToolbar #ToolbarContainer #MiniCartLink #CartAlert
+{
+  -webkit-animation-name: greenPulse;
+  background-color: #107c03;
+}
+
+
+.bgColorG { background-color: #3f3f3f; }
+.fontColorG { color: #3f3f3f; }
+
+#secMainContentFooter
+{
+  background: #3f3f3f;
+}
+
+#FOHEToolbar.scrolled
+{
+    height:59px !important;
+}
+
+#FOHEToolbarPageShift.scrolled
+{
+    height:61px !important;
+}
+
+
+
+.bgColorH { background-color: #646464; }
+.fontColorH { color: #646464; }
+
+
+body,#ctxFooter
+{
+  background: #646464;
+}
+
+.bgColorI { background-color: #FFFFFF; }
+.fontColorI { color: #FFFFFF; }
+
+#secMainContentFooter a,
+#custFooter,
+#ctxFooter,
+#step2Form .accordion.active:before,
+#step2Form .accordion.active
+{
+  color: #FFFFFF;
+}
+
+#FooterPortalLinks ul li
+{
+  border-right: 1px solid #FFFFFF;
+}
+
+#FooterPortalLinks ul li:last-child
+{
+  border-right: none;
+}
+
+.bgColorJ { background-color: #5e5e5e; }
+.fontColorJ { color: #5e5e5e; }
+
+.sectionHeader,
+.sectionHeaderOn,
+.paneTabs .rightRoundActive, 
+  #secMainContent #CTXProductDescription #productRight .featurebody .control input:checked ~ .control__indicator,
+form[name="frmFeedBack"] .feedbackFormResponseRequest .control input:checked ~ .control__indicator,
+#secMainContent #CTXProductDescription #productRight #pdADOsegments #ADOSServiceTimesBody #serviceTimesList .control input:checked ~ .control__indicator,
+#AllDayOrderTransferItemsnModal .control input:checked ~ .control__indicator,
+#GroupOrderRemoveParticipantModal .control input:checked ~ .control__indicator 
+{
+  background: #5e5e5e;
+}
+
+
+#d3SearchButton,
+#searchD3ContainerMenuSelection .catRadio input[type=radio]:checked ~ .radiobutton,
+#secLeftSide #SidebarTD #guestcountbutton,
+#secLeftSide #SidebarTD .guestFieldGroup #guestcount2button,
+#secLeftSide #SidebarTD #CTXSearchword input[type="button"],
+#secMainContent #CTXProductDescription #productRight .pdproductaddons-label,
+#secMainContent #menu-grid.ooe.sodexo .product-tile .detail-button,
+#ui-datepicker-div .ui-datepicker-buttonpane,
+#step2Form .accordion.active,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Update,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Create,
+#GroupOrderModal_ExitGroupOrder_Footer #GroupOrderModal_ExitGroupOrder_Actions #GroupOrderModal_ExitGroupOrder_Exit,
+#TakeoutModal #TakeoutModal_FulfillmentMethods label input:checked ~ .checkmark,
+#TakeoutModal #TakeoutModal_FulfillmentTimeSlotSelection .TimeSlot.selected,
+#MiniCart #OOECartWrapper #OOECartHeader
+{
+  background-color: #5e5e5e;
+}
+
+
+#d3SearchButton,
+.paneTabs .rightRound,
+.paneTabs .rightRoundActive,
+form[name="frmFeedBack"] #feedbackActionButtons #clearFeedbackFormButton,
+#dropzone form.dropzone,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_ActionButtons #ADOmodal_Cancel,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_Cancel,
+#GroupOrderModal #GroupOrderModal_FlexContainer #GroupOrderModal_CopyLinkButton,
+#GroupOrderModal #GroupOrderModal_FlexContainer #GroupOrderModal_EmailLinkButton,
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Footer #GroupOrderRecallCartModal_Actions #GroupOrderRecallCartModal_Cancel,
+#GroupOrderRemoveParticipantModal #GroupOrderRemoveParticipantModal_Footer #GroupOrderRemoveParticipantModal_Actions #GroupOrderRemoveParticipantModal_Cancel,
+#AllDayOrderCreationModal .ADOmodal_ServiceTime .ADOmodal_ServiceTimeDeleteWarning .ADOServiceTimeDeleteActions .ADOServiceTimeDeleteCancel,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Update,
+#GroupOrderModal_ExitGroupOrder_Footer #GroupOrderModal_ExitGroupOrder_Actions #GroupOrderModal_ExitGroupOrder_Exit,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Create,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Footer #GroupOrderParticipantModal_Actions #GroupOrderParticipantModal_Decline,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_CustomerAccountInformation_CopyLinkButton,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_CustomerAccountInformation_EmailLinkButton
+{
+  border: 1px solid #5e5e5e;
+}
+
+
+#frmPlaceOrder .stepDivBody #aStep1AddMore,
+#frmPlaceOrder .stepDivBody #aStep1Cancel,
+#frmPlaceOrder .stepDivBody #step2BackButton,
+#frmPlaceOrder .stepDivBody #aStep2Cancel,
+#frmPlaceOrder .stepDivBody #divStep3Buttons #step3BackButton,
+#frmPlaceOrder .stepDivBody #divStep3Buttons2 #step3BackButton,
+#frmPlaceOrder .stepDivBody #divStep3Buttons #step3CancelButton,
+#frmPlaceOrder .stepDivBody #divStep3Buttons2 #step3CancelButton,
+#frmPlaceOrder .stepDivBody #divStep3Buttons #step3AddOrderButton,
+#frmPlaceOrder .stepDivBody #divStep3Buttons2 #step3AddOrderButton,
+#frmPlaceOrder .stepDivBody #divStep4Buttons #aStep4Cancel,
+#frmPlaceOrder .stepDivBody #divStep4Buttons #step4BackButton,
+#secLeftSide #SidebarTD #CTXMenuSelection legend,
+#secLeftSide #SidebarTD #CTXEventDetails legend,
+#secLeftSide #SidebarTD #CTXTagList legend,
+#secLeftSide #SidebarTD #CTXMenu legend,
+#secLeftSide #SidebarTD #CTXSearchword legend,
+#secLeftSide #SidebarTD	#CTXPriceDetails legend,
+#secLeftSide #SidebarTD #CTXMenu:before,
+#secMainContent #CTXProductDescription #productRight .featureset legend,
+#secMainContent #CTXProductDescription #productRight .pfusertext legend,
+#secMainContent #CTXProductDescription #productRight .pdproductorderbutton .addtoother,
+.paneTabs .rightRound,
+.paneTabs .rightRound a,
+.paneTabs .rightRound a:link,
+.paneTabs .rightRound a:visited,
+.paneTabs .rightRound a:active,
+.paneTabs .leftRoundActive,
+.myAccountPane .paneContent .ADOrderHeader,
+#ssnLoginSidebar .reqDetails a,
+.topTenRight .topTenListMenu a,
+#ssnLoginSidebar h2,
+.paneTabs .updateText a,
+#myAccountContent #memoTD .insetborder .topTenListHeader,
+#tbCustomer #NewPasswordNote font,
+#menu-grid.ooe.standard .call-to-action .tile-arrow::after,
+form[name="frmFeedBack"] #feedbackActionButtons #clearFeedbackFormButton,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_ActionButtons #ADOmodal_Cancel,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_Cancel,
+#GroupOrderModal #GroupOrderModal_FlexContainer #GroupOrderModal_CopyLinkButton,
+#GroupOrderModal #GroupOrderModal_FlexContainer #GroupOrderModal_EmailLinkButton,
+#AllDayOrderCreationModal .ADOmodal_ServiceTime .ADOmodal_ServiceTimeDeleteWarning .ADOServiceTimeDeleteActions .ADOServiceTimeDeleteCancel,
+.accordion::before,
+.MIlinkProduct .fas,
+#AllDayOrderCreationModal .ADOmodal_ServiceTime .ADO_RemoveServiceTime,
+#AllDayOrderCreationModal .ADOmodal_ServiceTime .ADO_RemoveServiceTimeWithItems,
+#AllDayOrderCreationModal #ADOmodal_EventDetails #ADOmodal_EventDate #ADO_EventAvailabilityIcon,
+#frmPlaceOrder #divCartBody fieldset table .cartProductRow #step1RemoveItem a i.deleteTrash,
+#frmPlaceOrder #divCartBody fieldset .ado-checkout-order-name .input-with-icon i,
+.OOECartSegmentItem .OOECartSegmentRemoveItem,
+.OOECartSegmentItem .OOECartSegmentSubtractItemQuantity,
+.OOECartSegmentItem .OOECartSegmentAddItemQuantity,
+#OOECartEventInfo #DTOEventInfo #DTOEventInfoLinkSection .DTOEventInfoLink,
+#OOECartEventInfo #DTOEventInfo .DTOCalendarIcon,
+#TakeoutModal #TakeoutModal_FulfillmentTimeSlotSelection .TimeSlots .TimeSlot .TimeSlot_Time,
+#TakeoutModal #TakeoutModal_FulfillmentDateSelection #TakeoutModal_DateAvailabilityIcon,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartContinueAsGuestForm #hideguestcheckoutbutton,
+#divCartBody .fieldset #CouponName .clearCoupon,
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Footer #GroupOrderRecallCartModal_Actions #GroupOrderRecallCartModal_Cancel,
+#GroupOrderRemoveParticipantModal #GroupOrderRemoveParticipantModal_Footer #GroupOrderRemoveParticipantModal_Actions #GroupOrderRemoveParticipantModal_Cancel,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Footer #GroupOrderParticipantModal_Actions #GroupOrderParticipantModal_Decline,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_SaveAndUpdate #GroupOrderModal_SaveGroupOrderAndExit,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_CustomerAccountInformation_CopyLinkButton,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_CustomerAccountInformation_EmailLinkButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartExitGroupOrderParticipant #OOECartExitGroupOrderParticipantUpperText,
+#pdOrderItemGroupOrderLink .pdGroupOrderLink, .UploadFiles .fa, .uploadHeader h2
+{
+  color: #5e5e5e;
+}
+
+
+#primaryLoginPane input[type="submit"],
+#secMainContent #ForgotPassowrd #passwordResetForm #passwordResetButton,
+#passwordForm #passwordFormBtnDiv input[type="submit"],
+#passwordForm #passwordFormBtnDiv input[type="button"],
+#secMainContent #ResetPassword #passwordResetForm #resetPwdUpdateBtn,
+#secMainContent #contentArea2 #tblCustomer input[type="submit"],
+.simplemodal-wrap .menulist .CTXMenuSelection,
+.simplemodal-wrap #loadmenudialog .CTXMenuSelection,
+.simplemodal-wrap .menulist .CTXMenuSelection:link,
+.simplemodal-wrap #loadmenudialog .CTXMenuSelection:link,
+.simplemodal-wrap .menulist .CTXMenuSelection:active,
+.simplemodal-wrap #loadmenudialog .CTXMenuSelection:active,
+.simplemodal-wrap .menulist .CTXMenuSelection:visited,
+.simplemodal-wrap #loadmenudialog .CTXMenuSelection:visited,
+.menuButton a,
+.menuButton a:link,
+.menuButton a:active,
+.menuButton a:visited,
+#secLeftSide #SidebarTD #backtoMenu,
+#secMainContent #CTXProductList .productActionButton,
+#secMainContent #CTXProductList .productActionButton.unavailable:hover,
+#secMainContent #CTXProductDescription #productRight .pdproductorderbutton a,
+.sectionHeadingOn,
+.step3Button,
+#DynamicDropDown #AccountDropDown .drop-down-content form table tbody tr td input.loginBtn,
+.HomePageButton,
+#pageItemContainer .HomePageButton,
+.standardButton1,
+.standardButton1:link,
+.standardButton1:active,
+.standardButton1:visited,
+#company-info .changeAffiliateButton,
+#company-info .changeAffiliateButton:link,
+#company-info .changeAffiliateButton:active,
+#company-info .changeAffiliateButton:visited,
+#ssnSelectAffiliate a.changeAffiliateButton:link,
+#ssnSelectAffiliate a.changeAffiliateButton:active,
+#ssnSelectAffiliate a.changeAffiliateButton:visited,
+#searchPane input[type="submit"],
+#searchPane input[type="reset"],
+.productContainer .priceActionWrapper span.prodDetailsButton,
+.productContainer .priceActionWrapper a.prodDetailsButton,
+.productContainer .priceActionWrapper a.prodDetailsButton:link,
+.productContainer .priceActionWrapper a.prodDetailsButton:active,
+.productContainer .priceActionWrapper a.prodDetailsButton:visited,
+form[name="frmContact"] .formTable tbody tr td input[type="submit"],
+form[name="frmFeedBack"] #feedbackActionButtons #submitFeedbackFormButton,
+#secMainContent #contactUsContainer .formTable tbody tr td input[type="submit"],
+#secMainContent .cardContentSection .cards .card-item .card-content a:link,
+#secMainContent .cardContentSection .cards .card-item .card-content a:visited,
+#secMainContent .cardContentSection .card-buttons .card-item .card-button a:link,
+#secMainContent .cardContentSection .card-buttons .card-item .card-button a:visited,
+.productContainerExt .productOrderButton a,
+.productContainerExt .productOrderButton a:link,
+.productContainerExt .productOrderButton a:active,
+.productContainerExt .productOrderButton a:visited,
+#ssnLoginSidebar input.loginBtn,
+#ssnSelectAffiliate a.affiliateButton:link,
+#ssnSelectAffiliate a.affiliateButton:active,
+#ssnSelectAffiliate a.affiliateButton:visited,
+#sideAccountInfo #accountInfoMyAccountBtn,
+#sideAccountInfo #accountInfoLogOffBtn,
+#mcCheckout a,
+#mcCheckout a:link,
+#mcCheckout a:active,
+#mcCheckout a:visited,
+.sectionHeading,
+a.categoryGroupButton,
+a.categoryGroupButton:link,
+a.categoryGroupButton:active,
+a.categoryGroupButton:visited,
+a.categoryButton,
+a.categoryButton:link,
+a.categoryButton:active,
+a.categoryButton:visited,
+#DynamicDropDown .ContactUsD3Wrapper .contentWrapperHalfRight .contactusbutton,
+.dropzoneBtnContainer .HomePageButton,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsGroup .MenuGridButtons,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_ActionButtons #ADOmodal_Create,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_ActionButtons #ADOmodal_Update,
+#AllDayOrderCreationModal .ADOmodal_ServiceTime .ADOmodal_ServiceTimeDeleteWarning .ADOServiceTimeDeleteActions .ADOServiceTimeDeleteConfirm,
+#AllDayOrderCreationModal #ADOmodal_ConfirmCancelOrderAlert #ConfirmCancelOrderButtons #ConfirmCancelOrderNo,
+#AllDayOrderCreationModal #ADOmodal_ConfirmCancelOrderAlert #ConfirmCancelOrderButtons #ConfirmCancelOrderYes,
+#AllDayOrderTransferItemsnModal #TransferItemsADOUpdateCart,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_SaveAndUpdate #GroupOrderModal_AddToOrderButton,
+#GroupOrderModal .GroupOrderModal_Footer .GroupOrderModal_Actions #GroupOrderModal_Close,
+#GroupOrderModal .GroupOrderModal_Footer .GroupOrderModal_Actions #GroupOrderModal_Create,
+#GroupOrderSubmitModal #GroupOrderSubmitModal_Footer #GroupOrderSubmitModal_Actions #GroupOrderSubmitModal_Exit,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Footer #GroupOrderParticipantModal_Actions #GroupOrderParticipantModal_Join,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButtonForGroupOrderParticipant,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCouponCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButtonForGroupOrderOrganizer,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartADOCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartGuestCheckoutButtonWrap #OOECartGuestCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartGuestCheckoutButtonWrap #OOECartCouponGuestCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartConfirmCancelOrderAlert #OOECartConfirmCancelOrderButtons #OOECartConfirmCancelOrderNo,
+#MiniCart #OOECartWrapper #OOECartConfirmCancelOrderAlert #OOECartConfirmCancelOrderButtons #OOECartConfirmCancelOrderYes,
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitButtons #OOECartConfirmSaveAndExitNo,
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitButtons #OOECartConfirmSaveAndExitYes,
+
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutButtons #OOECartConfirmGroupOrderCheckoutNo,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutButtons #OOECartConfirmGroupOrderCheckoutYes,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitButtons #OOECartConfirmGroupOrderParticipantExitNo,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitButtons #OOECartConfirmGroupOrderParticipantExitYes,
+#secMainContent #CTXProductDescription #productRight #pdCancelOrderConfirm #pdConfirmCancelOrderButtons #pdConfirmCancelOrderNo, 
+#secMainContent #CTXProductDescription #productRight #pdCancelOrderConfirm #pdConfirmCancelOrderButtons #pdConfirmCancelOrderYes,
+#secMainContent #contentArea2 #LoginErrorContainer #LoginErrorButtons input,
+#primaryLoginPane .guestLogin,
+#secLeftSide #ssnCoupon #couponFrm input[type=submit],
+#secMainContent #ssnCoupon #couponFrm input[type=submit],
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Footer #GroupOrderRecallCartModal_Actions #GroupOrderRecallCartModal_Confirm,
+#GroupOrderRemoveParticipantModal #GroupOrderRemoveParticipantModal_Footer #GroupOrderRemoveParticipantModal_Actions #GroupOrderRemoveParticipantModal_Confirm:not([disabled]),
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_CustomerAccountInformation_Cancel, .uploadedFileNameButton,
+#secMainContent #CTXProductDescription #productRight #pdOrderItemGroupLabelEntry #pdAddNewParticipant
+{
+  background: #5e5e5e;
+  border: 1px solid #5e5e5e;
+}
+
+td.DTOCalendarSelectedDate,
+td.DTOTimeChosen,
+td.DTOOrderReadyMsg, 
+.dropzoneprogressbar
+{
+  background: #5e5e5e;
+}
+
+#frmPlaceOrder #divEventInfoBody .DTOChangeTimeBtn
+{
+  background: #FFF;
+  border: 1px solid #5e5e5e;
+  color: #5e5e5e;
+}
+
+#frmPlaceOrder #divEventInfoBody .DTOChangeTimeBtn:hover
+{
+  background: #EEE;
+  border: 1px solid #5e5e5e;
+  color: #5e5e5e;
+}
+
+#menucrumbs a.NoLocation:hover
+{
+  color: #000;
+}
+
+.shopthanksButton,
+.shopthanksButton:link,
+.shopthanksButton:active,
+.shopthanksButton:visited,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Cancel,
+#GroupOrderModal_ExitGroupOrder_Footer #GroupOrderModal_ExitGroupOrder_Actions #GroupOrderModal_ExitGroupOrder_Cancel,
+#CheckoutCouponCodeEntry #ApplyCouponCode
+{
+  border: 1px solid #5e5e5e;
+  color: #5e5e5e;
+}
+
+@media only screen and (max-width: 800px){
+
+  #shopThanksWrapper #shopThanksShowInvoice #shopThanksShowInvoiceIn
+  {
+    background-color: #5e5e5e;
+  }
+  
+  #shopThanksWrapper #shopThanksShowInvoice #shopThanksShowInvoiceIn:hover
+  {
+    border: 1px solid #5e5e5e;
+  }
+  
+  #nextTenOrders .nextTenOrderBlock .nextTenOrderRow a,
+  #NextTenReservations .nextTenReservationBlock .nextTenReservationRow a,
+  #OnlineWalletDiv .updateText a,
+  #custInfo .updateText a
+  {
+    background: #5e5e5e;
+    border: 1px solid #5e5e5e;
+  }
+}
+
+.bgColorK { background-color: #7b7b7b; }
+.fontColorK { color: #7b7b7b; }
+
+#secMainContent #CTXProductDescription #productRight .pdproductorderbutton a:hover,
+#secMainContent #CTXProductDescription #productRight .featurebody .control:hover input:not([disabled]):checked ~ .control__indicator,
+form[name="frmFeedBack"] .feedbackFormResponseRequest .control:hover input:not([disabled]):checked ~ .control__indicator,
+#secMainContent #CTXProductDescription #productRight #pdADOsegments #ADOSServiceTimesBody #serviceTimesList .control:hover input:not([disabled]):checked ~ .control__indicator,
+#AllDayOrderTransferItemsnModal .control input:checked ~ .control__indicator:hover,
+#GroupOrderRemoveParticipantModal  .control:hover input:not([disabled]):checked ~ .control__indicator,
+#divStep1Header.sectionHeader.AllDayOrderCheckout .sectionHeading:hover
+{
+  background: #7b7b7b;
+}
+
+
+#secLeftSide #SidebarTD #guestcountbutton:hover,
+#secLeftSide #SidebarTD .guestFieldGroup #guestcount2button:hover,
+#secLeftSide #SidebarTD #CTXSearchword input[type="button"]:hover,
+#searchD3ContainerMenuSelection .catRadio:hover input[type=radio] ~ .radiobutton,
+#ui-datepicker-div .ui-datepicker-buttonpane:hover,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Create:not(.disabled):hover,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Update:not(.disabled):hover,
+#GroupOrderModal_ExitGroupOrder_Footer #GroupOrderModal_ExitGroupOrder_Actions #GroupOrderModal_ExitGroupOrder_Exit:not(.disabled):hover,
+#TakeoutModal #TakeoutModal_FulfillmentMethods label input:checked ~ .checkmark:hover,
+#TakeoutModal #TakeoutModal_FulfillmentTimeSlotSelection .TimeSlot:not(.unavailable):hover,
+#secMainContent #ssnCoupon.sideBox .couponInfo .couponAmount
+{
+  background-color: #7b7b7b;
+}
+
+
+#secLeftSide #SidebarTD #CTXMenu .mncategories li a:hover,
+#secLeftSide #SidebarTD #CTXMenu .mncategorylist li a:hover,
+#secLeftSide #SidebarTD #CTXMenu .mncategories li li:hover,
+#secLeftSide #SidebarTD #CTXMenu .mncategorylist li li:hover,
+#secLeftSide #SidebarTD #CTXTagList .Taggroup li:hover,
+#secMainContent #CTXBreadCrumb a:hover,
+#frmPlaceOrder .stepDivBody #aStep1AddMore:hover,
+#frmPlaceOrder .stepDivBody #aStep1Cancel:hover,
+#frmPlaceOrder .stepDivBody #step2BackButton:hover,
+#frmPlaceOrder .stepDivBody #aStep2Cancel:hover,
+#frmPlaceOrder .stepDivBody #divStep3Buttons #step3BackButton:hover,
+#frmPlaceOrder .stepDivBody #divStep3Buttons #step3CancelButton:hover,
+#frmPlaceOrder .stepDivBody #divStep3Buttons #step3AddOrderButton:hover,
+#frmPlaceOrder .stepDivBody #divStep3Buttons2 #step3BackButton:hover,
+#frmPlaceOrder .stepDivBody #divStep3Buttons2 #step3CancelButton:hover,
+#frmPlaceOrder .stepDivBody #divStep3Buttons2 #step3AddOrderButton:hover,
+#frmPlaceOrder .stepDivBody #divStep4Buttons #aStep4Cancel:hover,
+#frmPlaceOrder .stepDivBody #divStep4Buttons #step4BackButton:hover,
+#ssnLoginSidebar .reqDetails a:hover,
+.paneTabs .rightRound a:hover,
+.paneTabs .updateText a:hover,
+.topTenRight .topTenListMenu a:hover,
+.commentsBox legend a:hover,
+body a:hover,
+body a:focus,
+.static_content_container a:hover,
+#secTopNav1 #socialMedia a:hover,
+#secTopNav1 #socialMedia a:focus,
+.OOECartSegmentItem .OOECartSegmentRemoveItem:hover,
+.OOECartSegmentItem .OOECartSegmentSubtractItemQuantity:hover,
+.OOECartSegmentItem .OOECartSegmentAddItemQuantity:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartContinueAsGuestForm #hideguestcheckoutbutton:hover,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_SaveAndUpdate #GroupOrderModal_SaveGroupOrderAndExit:hover,
+#divCartBody .fieldset #CouponName .clearCoupon:hover,
+#GroupOrderModal a.CloseModal:hover,
+#menucrumb #GroupOrderExitOrder:hover,
+#TakeoutModal a.CloseModal:hover,
+#TakeoutAvailabilityChoice #TakeoutAvailabilityMessage #TakeoutIndividual:hover,
+#TakeoutAvailabilityChoice #TakeoutAvailabilityMessage #TakeoutGroupOrder:hover
+{
+  color: #7b7b7b;
+}
+
+
+#d3SearchButton:hover,
+#primaryLoginPane input[type="submit"]:hover,
+#secMainContent #ForgotPassowrd #passwordResetForm #passwordResetButton:hover,
+#passwordForm #passwordFormBtnDiv input[type="submit"]:hover,
+#passwordForm #passwordFormBtnDiv input[type="button"]:hover,
+#secMainContent #ResetPassword #passwordResetForm #resetPwdUpdateBtn:hover,
+#secMainContent #contentArea2 #tblCustomer input[type="submit"]:hover,
+#nextTenOrders .nextTenOrderBlock .nextTenOrderRow a:hover,
+.standardButton1:hover,
+#company-info .changeAffiliateButton:hover,
+#ssnSelectAffiliate a.changeAffiliateButton:hover,
+.step3Button:hover,
+.simplemodal-wrap .menulist .CTXMenuSelection:hover,
+.simplemodal-wrap #loadmenudialog .CTXMenuSelection:hover,
+.menuButton a:hover,
+#secLeftSide #SidebarTD #backtoMenu:hover,
+#secMainContent #CTXProductList .productActionButton:hover,
+#DynamicDropDown #AccountDropDown .drop-down-content form table tbody tr td input.loginBtn:hover,
+.productContainer .priceActionWrapper a.prodDetailsButton:hover,
+#secMainContent .cardContentSection .cards .card-item .card-content a:link:hover,
+#secMainContent .cardContentSection .card-buttons .card-item .card-button a:link:hover,
+form[name="frmFeedBack"] #feedbackActionButtons #submitFeedbackFormButton:hover,
+form[name="frmContact"] .formTable tbody tr td  input[type="submit"]:hover,
+#secMainContent #contactUsContainer .formTable tbody tr td input[type="submit"]:hover,
+.HomePageButton:hover,
+#pageItemContainer .HomePageButton:hover,
+.productContainerExt .productOrderButton a:hover,
+a.categoryGroupButton:hover, a.categoryButton:hover,
+#ssnLoginSidebar input.loginBtn:hover,
+#ssnSelectAffiliate a.affiliateButton:hover,
+#sideAccountInfo #accountInfoMyAccountBtn:hover,
+#sideAccountInfo #accountInfoLogOffBtn:hover,
+#mcCheckout a:hover,
+#DynamicDropDown .ContactUsD3Wrapper .contentWrapperHalfRight .contactusbutton:hover,
+.dropzoneBtnContainer .HomePageButton:hover,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsGroup .MenuGridButtons:hover,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_ActionButtons #ADOmodal_Create:hover,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_ActionButtons #ADOmodal_Update:hover,
+#AllDayOrderCreationModal .ADOmodal_ServiceTime .ADOmodal_ServiceTimeDeleteWarning .ADOServiceTimeDeleteActions .ADOServiceTimeDeleteConfirm:hover,
+#AllDayOrderCreationModal #ADOmodal_ConfirmCancelOrderAlert #ConfirmCancelOrderButtons #ConfirmCancelOrderNo:hover,
+#AllDayOrderCreationModal #ADOmodal_ConfirmCancelOrderAlert #ConfirmCancelOrderButtons #ConfirmCancelOrderYes:hover,
+#AllDayOrderTransferItemsnModal #TransferItemsADOUpdateCart:hover,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_SaveAndUpdate #GroupOrderModal_AddToOrderButton:hover,
+#GroupOrderModal .GroupOrderModal_Footer .GroupOrderModal_Actions #GroupOrderModal_Close:hover,
+#GroupOrderSubmitModal #GroupOrderSubmitModal_Footer #GroupOrderSubmitModal_Actions #GroupOrderSubmitModal_Exit:hover,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Footer #GroupOrderParticipantModal_Actions #GroupOrderParticipantModal_Join:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButton:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButtonForGroupOrderParticipant:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCouponCheckoutButton:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButtonForGroupOrderOrganizer:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartADOCheckoutButton:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartGuestCheckoutButtonWrap #OOECartGuestCheckoutButton:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitButtons #OOECartConfirmSaveAndExitNo:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitButtons #OOECartConfirmSaveAndExitYes:hover,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_Actions #GroupOrderModal_Create:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutButtons #OOECartConfirmGroupOrderCheckoutNo:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutButtons #OOECartConfirmGroupOrderCheckoutYes:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitButtons #OOECartConfirmGroupOrderParticipantExitNo:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitButtons #OOECartConfirmGroupOrderParticipantExitYes:hover,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartGuestCheckoutButtonWrap #OOECartCouponGuestCheckoutButton:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmCancelOrderAlert #OOECartConfirmCancelOrderButtons #OOECartConfirmCancelOrderNo:hover,
+#MiniCart #OOECartWrapper #OOECartConfirmCancelOrderAlert #OOECartConfirmCancelOrderButtons #OOECartConfirmCancelOrderYes:hover,
+#secMainContent #CTXProductDescription #productRight #pdCancelOrderConfirm #pdConfirmCancelOrderButtons #pdConfirmCancelOrderNo:hover, 
+#secMainContent #CTXProductDescription #productRight #pdCancelOrderConfirm #pdConfirmCancelOrderButtons #pdConfirmCancelOrderYes:hover,
+#secMainContent #contentArea2 #LoginErrorContainer #LoginErrorButtons input:hover,
+#primaryLoginPane .guestLogin:hover,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Create:not(.disabled):hover,
+#TakeoutModal #TakeoutModal_Actions #TakeoutModal_Update:not(.disabled):hover,
+#GroupOrderModal_ExitGroupOrder_Footer #GroupOrderModal_ExitGroupOrder_Actions #GroupOrderModal_ExitGroupOrder_Exit:not(.disabled):hover,
+#secLeftSide #ssnCoupon #couponFrm input[type=submit]:hover,
+#secMainContent #ssnCoupon #couponFrm input[type=submit]:hover,
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Footer #GroupOrderRecallCartModal_Actions #GroupOrderRecallCartModal_Confirm:hover,
+#GroupOrderRemoveParticipantModal #GroupOrderRemoveParticipantModal_Footer #GroupOrderRemoveParticipantModal_Actions #GroupOrderRemoveParticipantModal_Confirm:not([disabled]):hover,
+#GroupOrderModal #GroupOrderModal_Footer #GroupOrderModal_CustomerAccountInformation_Cancel:hover,
+#secMainContent #CTXProductDescription #productRight #pdOrderItemGroupLabelEntry #pdAddNewParticipant:hover
+{
+  background: #7b7b7b;
+  border: 1px solid #7b7b7b;
+}
+
+#secMainContent #menu-grid.ooe.standard .menu-tile:hover .call-to-action,
+#secMainContent #menu-grid.ooe.standard .category-tile:hover .call-to-action,
+#secMainContent #menu-grid.ooe.standard .product-tile:hover .call-to-action,
+#secMainContent #menu-grid.ooe.sodexo .product-tile .detail-button:hover
+{
+  background: #7b7b7b;
+}
+
+
+#secMainContent #menu-grid.ooe.bonapp .menu-tile:hover,
+#secMainContent #menu-grid.ooe.bonapp .category-tile:hover,
+#secMainContent #menu-grid.ooe.bonapp .product-tile:hover
+{
+  border: solid 2px #7b7b7b;
+}
+
+
+
+@media only screen and (max-width: 800px){
+  #shopThanksWrapper #shopThanksShowInvoice #shopThanksShowInvoiceIn:hover
+  {
+    background: #7b7b7b;
+  }
+  
+  #nextTenOrders .nextTenOrderBlock .nextTenOrderRow a:hover,
+  #NextTenReservations .nextTenReservationBlock .nextTenReservationRow a:hover,
+  #OnlineWalletDiv .updateText a:hover,
+  #custInfo .updateText a:hover
+  {
+    background: #7b7b7b;
+    border: 1px solid #7b7b7b;
+  }
+}
+
+.bgColorL { background-color: #646464; }
+.fontColorL { color: #646464; }
+
+#DynamicDropDown h1,
+#DynamicDropDown h2,
+#DynamicDropDown h3,
+#DynamicDropDown h4,
+#DynamicDropDown #AccountDropDown .drop-down-content .drop-down-info h2,
+#CGBanner h1,
+#CGBanner h2,
+#secMainContent h1,
+#secMainContent h2,
+#secMainContent h3,
+#secMainContent h4,
+#DynamicDropDown [id^="CustomLinkD3Content"] .D3MenuContainer .D3MenuList div .ParentCategory a,
+#DynamicDropDown #AccountDropDown .drop-down-content .drop-down-list li:not(.ADOEnabled) a,
+#DynamicDropDown #AccountDropDown .drop-down-content .drop-down-list li.ADONewOrderHeader,
+#searchD3ContainerMenuSelection .searchAffNameLabel,
+#CTXProductList .gridProdTitle h3,
+#secMainContent #CTXProductDescription #productLeft .pdproductname,
+#secMainContent #CTXProductDescription #productRight .pdproductheading,
+#secMainContent #CTXProductDescription #productRight .featureTitle,
+#secMainContent #CTXProductDescription #productRight .allComponents .componentListItem::before,
+#secMainContent #CTXProductDescription #productRight .featureset legend .featureheader,
+#secMainContent #CTXProductDescription #productRight .pdproductincludedaddons .addonlabel,
+#secMainContent #CTXProductDescription #productRight .pdproductdescription .pdproductcomponentsheader,
+#secMainContent #CTXProductDescription #productRight .pdaddondescription .pdproductcomponentsheader,
+#secMainContent #CTXProductList .catHeader,
+#secMainContent #CTXProductList .productName,
+#AcctInfoTD .paneTabs .leftRoundActive,
+.commentsBox legend,
+.commentsBox legend a,
+#secMainContent h2.AffHeader,
+#secMainContent #CTXProductDescription #productRight .featureoptionallergens,
+#ProductComponentNutritionModal .nutritionInfo .productcomponent .componentCol .ComponentWrapper .componentAllergens,
+#ProductComponentNutritionModal .nutritionStatement,
+#ProductComponentNutritionModal .modalTitle h1,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsHeader,
+#AllDayOrderCreationModal #ADOmodal_Title h1,
+#TakeoutModal #TakeoutModal_Title h1,
+#AllDayOrderCreationModal #ADOmodal_ServiceTimeTitle h2,
+#secMainContent #CTXProductDescription #productRight #pdADOsegments #ADOheader,
+#secMainContent #CTXProductDescription #productRight #pdADOsegments .ADODescriptionLinkContainer .ADOEditLink,
+#secMainContent #CTXProductDescription #productRight .pdproductorderbutton .ADOModalLink,
+#secMainContent #CTXProductDescription #productRight #pdMenuChangeMessage #pdMenuChangeCancelOrderWrapper #pdMenuChangeCancelOrder,
+#secMainContent #CTXProductDescription #productRight #pdMenuChangeMessage #pdMenuChangeCancelOrderWrapper #pdMenuChangeCancelOrder:hover,
+#AllDayOrderCreationModal #ADOmodal_AddServiceTimeButton,
+#AllDayOrderCreationModal #ADOmodal_CreateMSG #ADOmodal_CreateMSGTitle,
+#AllDayOrderCreationModal #ADOmodal_footer #ADOmodal_CancelOrder,
+#AllDayOrderTransferItemsnModal #ADOmodal_Title h1,
+#GroupOrderModal #GroupOrderModal_ShareLinkTitle h3,
+#GroupOrderModal #GroupOrderModal_Title h1,
+#GroupOrderSubmitModal #GroupOrderSubmitModal_Title h1,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Title h1,
+#GroupOrderModal_ExitGroupOrder_Title h1,
+#MiniCart #OOECartWrapper #OOECartMasterInvoiceInfo #OOECartThrowADOModal,
+#MiniCart #OOECartWrapper #OOECartEventInfo #OOECartGroupOrderInfo #OOECartGroupOrderDetails #OOECartThrowGroupOrderModalLinks #OOECartThrowGroupOrderModalShareLink,
+#MiniCart #OOECartWrapper #OOECartEventInfo #OOECartGroupOrderInfo #OOECartGroupOrderDetails #OOECartThrowGroupOrderModalLinks #OOECartThrowGroupOrderModalEditLink,	
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCancelOrderButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartConfirmSaveAndExitButton,
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitMessage h3,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutMessage h3,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitMessage h3,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartContinueAsGuestButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCreateAccountButton,
+#frmPlaceOrder #divPlaceOrderBody #divCartBody fieldset .ado-checkout-order-name label,
+#frmPlaceOrder #divCartBody fieldset table .orderGroupLabel,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartContinueAsGuestForm #OOECartApplyCouponContainer #OOECartGuestApplyCouponLink,
+#MiniCart #OOECartWrapper #OOECartBody #OOECartApplyCouponContainer #OOECartApplyCouponLink,
+#MiniCart #OOECartWrapper #OOECartBody #OOECartApplyCouponContainer #OOECartApplyCouponLinkForGroupOrganizer,
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Title h1,
+#GroupOrderModal #GroupOrderModal_CustomerAccountInformation_Title h1, #OOECartGroupOrderEventName b,
+#OOECartRemoveParticipantsGroupOrderModal #GroupOrderRemoveParticipantModal_Title h1, .GroupOrderRemoveParticipantModal_ParticipantNameLabel,
+#MiniCart #OOECartWrapper #OOECartEventInfo #OOECartGroupOrderInfo #OOECartRemoveParticipantsGroupOrderModal
+{
+  color: #646464;
+}
+
+#secMainContent #CTXProductDescription #productRight #pdMenuChangeMessage
+{
+  color: #FFF;
+  background-color: #646464;
+}
+
+#secMainContent #CTXProductDescription #productRight .pdquantityandpricerow,
+#secMainContent #CTXProductDescription #productRight .pdproductcomponents,
+#secMainContent #CTXProductDescription #productRight .pdproductorderbutton .ADOModalLink,
+#shopThanksWrapper #divADO, #shopThanksShowInvoice .mobileOrderSummaryInformation, #shopThanksWrapper .divDTO, #shopThanksWrapper .divCatering,
+#secMainContent #CTXProductDescription #productRight #pdMenuChangeMessage,
+#secMainContent #CTXProductDescription #productRight #pdMenuChangeMessage #pdMenuChangeCancelOrderWrapper #pdMenuChangeCancelOrder,
+#secMainContent #CTXProductDescription #productRight #pdMenuChangeMessage #pdMenuChangeCancelOrderWrapper #pdMenuChangeCancelOrder:hover
+{
+  border: 1px solid #646464;
+}
+
+#shopThanksWrapper #divADO #MIInfo, #shopThanksShowInvoice th, #shopThanksWrapper .divDTO .DTOOrderInfo, #shopThanksWrapper .divCatering .CateringOrderInfo {
+  border-bottom: 1px solid #646464;
+}
+
+#secMainContent #CTXProductDescription #productRight .pdquantityandpricerow,
+#secMainContent #CTXProductDescription #productRight .pdproductcomponents,
+#secMainContent #CTXProductDescription #productRight .featurebody .control--checkbox[ischecked="true"],
+#secMainContent #CTXProductDescription #productRight .featurebody .control--radio[ischecked="true"],
+#secMainContent #CTXProductDescription #productRight .featurebody .featureitemlist .featureitem[isdirty="true"],
+form[name="frmFeedBack"] .feedbackFormResponseRequest .control--checkbox[ischecked="true"],
+#secMainContent #CTXProductDescription #productRight #pdADOsegments #ADOSServiceTimesBody #serviceTimesList .control--radio[ischecked="true"],
+#MiniCart #OOECartWrapper .OOECartHR,
+#MiniCart #OOECartWrapper #OOECartBody .OOECartSegmentItem.highlight,
+#shopThanksWrapper #divADO, #shopThanksShowInvoice th, #shopThanksWrapper .divDTO .DTOOrderInfo, #shopThanksWrapper .divCatering .CateringOrderInfo
+{
+  background-color: rgba(100,100,100,0.1);
+}
+
+#MiniCart #OOECartWrapper .OOECartHR{
+  border:1px solid rgba(100,100,100,0.1);
+}
+@media only screen and (max-width: 800px){
+  #DynamicDropDown #DynamicDropDownView [id^="CustomLinkDropDown"] [id^="CustomLinkD3Content"] .D3MenuContainer .D3MenuList .D3MenuColumn1 .ParentCategory a
+  {
+    color: #646464;
+  }
+}
+
+
+#ooeAramarkCategoryGrid .ooeAramarkCategoryGridCategoryGroupBoxDisplayTitle,
+#menu-grid.ooe .box-title,
+#menu-grid.ooe .tile-title,
+#menu-grid.ooe.bonapp .tile-description,
+#MIInfo #MINameID, #MIInfo #MIName
+{
+  color: #646464;
+}
+
+
+#secMainContent #menu-grid.ooe.standard .box-title-line,
+#secMainContent #menu-grid.ooe.bonapp .box-title-line,
+#secMainContent #menu-grid.ooe.standard .divider
+{
+  background-color: rgba(100,100,100,0.1);
+}
+
+
+.bgColorM { background-color: #EFEFEF; }
+.fontColorM { color: #EFEFEF; }
+
+#secMainContent #menu-grid.ooe.standard .call-to-action,
+#secMainContent #menu-grid.ooe.standard .category-box,
+#secMainContent #menu-grid.ooe.bonapp .category-box,
+#secMainContent #menu-grid.ooe.bonapp .menu-tile,
+#secMainContent #menu-grid.ooe.bonapp .category-tile,
+#secMainContent #menu-grid.ooe.bonapp .product-tile .call-to-action
+{
+  background-color: #EFEFEF;
+}
+
+#secMainContent #menu-grid.ooe.bonapp .menu-tile,
+#secMainContent #menu-grid.ooe.bonapp .category-tile,
+#secMainContent #menu-grid.ooe.bonapp .subcategory-tile,
+#secMainContent #menu-grid.ooe.bonapp .product-tile
+{
+  border: solid 2px #EFEFEF;
+}
+
+.bgColorN { background-color: #000000; }
+.fontColorN { color: #000000; }
+
+#FOHEToolbar
+{
+  border-bottom-style: solid;
+  border-bottom-color: #000000;
+  border-bottom-width: 1px;
+  box-sizing: content-box;
+}
+
+#DynamicDropDown.open
+{
+  border-top-style: solid;
+  border-top-color: #000000;
+  border-top-width: 1px;
+}
+
+
+#pageItemContainer .customButtonColor1
+{
+  background: #cca349;
+  border: 1px solid #cca349;
+}
+
+  #pageItemContainer .customButtonColor1:hover
+  {
+    background: #d8b874;
+    border: 1px solid #d8b874;
+  }
+
+#pageItemContainer .customButtonColor2
+{
+  background: #5DC96F;
+  border: 1px solid #5DC96F;
+}
+
+  #pageItemContainer .customButtonColor2:hover
+  {
+    background: #8cd996;
+    border: 1px solid #8cd996;
+  }
+
+#pageItemContainer .customButtonColor3
+{
+  background: #00A59E;
+  border: 1px solid #00A59E;
+}
+
+  #pageItemContainer .customButtonColor3:hover
+  {
+    background: #4dfff6;
+    border: 1px solid #4dfff6;
+  }
+
+
+#pageBackgroundContainer.fullWidthPageContent #pageContainer #secMainContent h1,
+#pageBackgroundContainer.fullWidthPageContent #pageContainer #secMainContent .contentTemplateIMG .img_overlay h1,
+#DynamicDropDown h1,
+#DynamicDropDown [id^="CustomLinkD3Content"] .D3MenuContainer .D3TitleBlock h1,
+#secMainContent h1,
+#CGBanner h1,
+#ooeAramarkCategoryGrid .ooeAramarkCategoryGridCategoryGroupBoxDisplayTitle,
+#secMainContent #menu-grid.ooe .title-box .box-title,
+#secMainContent #menu-grid.ooe .category-box .box-title,
+#secMainContent #menu-grid.ooe.sodexo .affiliate-box .box-title,
+#secMainContent #CTXProductList .catHeader,
+#secMainContent #myAccountContent #myAccountWelcome,
+#ProductComponentNutritionModal h1,
+#AllDayOrderCreationModal #ADOmodal_Title h1,
+#AllDayOrderTransferItemsnModal #ADOmodal_Title h1,
+#TakeoutModal #TakeoutModal_Title h1, #shopThanksWrapper #divADOMsg h1,
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Title h1,
+#GroupOrderModal #GroupOrderModal_Title h1,
+#GroupOrderModal #GroupOrderModal_CustomerAccountInformation_Title h1,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Title h1,
+#GroupOrderSubmitModal #GroupOrderSubmitModal_Title h1,
+#GroupOrderRemoveParticipantModal #GroupOrderRemoveParticipantModal_Title h1
+{
+  font-size: 32px;
+  line-height: 1.3em;
+}
+
+@media only screen and (max-width: 800px){
+  #DynamicDropDown #DynamicDropDownView [id^="CustomLinkDropDown"] [id^="CustomLinkD3Content"] .D3MenuContainer .D3TitleBlock h1
+  {
+    font-size: 32px;
+  }
+}
+
+#secMainContent h2,
+#secMainContent .cardContentSection .card-buttons .card-item .card-content h2,
+#secMainContent .cardContentSection .cards .card-item .card-content h2,
+#CGBanner h2,
+#DynamicDropDown h2,
+#DynamicDropDown #AccountDropDown .drop-down-content .drop-down-info h2,
+.GridHeading h2,
+#secMainContent .gridCatTitle h2,
+#company-info h2,
+#ssnLoginSidebar h2,
+#ssnSelectAffiliate h2,
+#sideAccountInfo h2,
+#ssnSideOrder h2,
+#secMainContent #menu-grid.ooe .affiliate-box .box-title,
+#secMainContent #menu-grid.ooe .subcategory-box .box-title,
+#secMainContent #menu-grid.ooe .product-tile .tile-title,
+#secMainContent #menu-grid.ooe.sodexo .menu-tile .tile-title,
+#secMainContent #CTXProductDescription #productLeft .pdproductname,
+#AcctInfoTD .paneTabs .leftRoundActive,
+.commentsBox legend,
+#frmPlaceOrder .sectionHeading,
+#frmPlaceOrder .sectionHeadingOn,
+#secMainContent #CTXProductList .catHeader.subCatHeader,
+#secMainContent #CTXProductDescription #productRight .pdaddon .pdaddonname .addonlabel,
+#secMainContent .diningPromotionCards .cardTitle,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsGroup .MenuGridButtons,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsHeader,
+#AllDayOrderCreationModal #ADOmodal_ServiceTimeTitle h2,
+#AllDayOrderCreationModal #ADOmodal_CreateMSG #ADOmodal_CreateMSGTitle,
+#MiniCart #OOECartWrapper #OOECartHeader #OOECartItemCount,
+#MiniCart #OOECartWrapper #OOECartMasterInvoiceInfo #OOECartMasterInvoiceName,
+#MINameID h2, #MIName h2,
+.DTOOrderInfo .PickUpDateTime h2, .CateringOrderInfo .DeliveryDateTime h2,
+.uploadHeader h2
+{
+  font-size: 26px;
+  line-height: 1.3em;
+}
+
+
+
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitMessage h3,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutMessage h3,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitMessage h3,
+#DynamicDropDown h3,
+#secMainContent h3,
+#secMainContent #menu-grid.ooe .category-tile .tile-title,
+#secMainContent #menu-grid.ooe.standard .menu-tile .tile-title,
+#secMainContent #CTXProductDescription #productRight .pdproductheading,
+#secMainContent #CTXProductDescription #productRight .pdproductaddons .pdproductcomponentsheader,
+#secMainContent #CTXProductDescription #productRight .pdproductincludedaddons .pdproductcomponentsheader,
+#secMainContent #CTXProductDescription #productRight .pdproductdescription .pdproductcomponentsheader,
+#secMainContent #CTXProductList .productName,
+#acctComments legend a,
+.dropzoneContainer h3,
+.myAccountPane .paneContent .ADOrderHeader,
+#secMainContent #CTXProductDescription #productRight .pdproductorderbutton .ADOModalLink .ADOModalLinkText,
+.OOECartSegmentName,
+#OOECartGrandTotal, 
+#divOOEDTOMsg h3, #divOOECateringMsg h3,
+#GroupOrderModal #GroupOrderModal_ShareLinkTitle h3
+{
+  font-size: 20px;
+  line-height: 1em;
+}
+
+#frmPlaceOrder #divCartBody fieldset table .orderGroupLabel
+{
+  font-size: 20px;
+  line-height: 2em;
+}
+
+#secMainContent #CTXProductDescription #productRight .featureTitle
+{
+  font-size: 20px;
+  line-height: 1.4em;
+}
+
+#secMainContent #menu-grid.ooe.bonapp .category-tile .tile-title
+{
+  font-size: 20px;
+  line-height: 1.5em;
+}
+
+
+#secMainContent h4,
+#DynamicDropDown h4,
+.DTOOrderInfo .DeliveryMethod h4, .CateringOrderInfo .EventName h4, .CateringOrderInfo .ShipMethod h4
+{
+  font-size: 20px;
+  line-height: 1em;
+}
+
+
+#secMainContent h6,
+#DynamicDropDown h6,
+#CompanyTagline
+{
+  font-size: 13px;
+  line-height: 1.3em;
+}
+
+
+#FOHEToolbar #ToolbarContainer #HeaderStandardLinks .HeaderStandardLinksLabel .primary,
+#MobileAccountLoginLink .HeaderStandardLinksLabel .primary,
+#MobileGroupOrderLink .HeaderStandardLinksLabel .primary,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartCheckoutButtonForGroupOrderParticipant,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartCheckoutButtonWrap #OOECartADOCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartGuestCheckoutButtonWrap #OOECartGuestCheckoutButton,
+#MiniCart #OOECartWrapper #OOECartFooter #OOECartGuestCheckoutButtonWrap #OOECartCouponGuestCheckoutButton
+{
+  text-transform: uppercase;
+}
+
+</style>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato:400italic,600italic,700italic,400,600,700">
+<style>
+
+#FOHEToolbar #ToolbarContainer #HeaderNavigation #NavigationLinks,
+#FOHEToolbar #ToolbarContainer #HeaderNavigation #moreLink,
+#FOHEToolbar #ToolbarContainer #HeaderNavigation #MoreNavigationLinks,
+#FOHEToolbar #ToolbarContainer #HeaderStandardLinks .HeaderStandardLinksLabel .primary,
+#MobileMenuDropDown #MobileMenuNavigationLinks li
+{
+  font-family: Lato;
+}
+
+#MobileMenuDropDown #MobileMenuNavigationLinks #MobileAccountLoginLink .secondary
+{
+  font-family: Open Sans;
+}
+
+#MobileMenuDropDown #MobileMenuNavigationLinks #MobileGroupOrderLink .secondary
+{
+  font-family: Open Sans;
+}
+
+
+#FOHEToolbar #ToolbarContainer #HeaderNavigation #NavigationLinks,
+#FOHEToolbar #ToolbarContainer #HeaderNavigation #moreLink,
+#FOHEToolbar #ToolbarContainer #HeaderNavigation #MoreNavigationLinks,
+#FOHEToolbar #ToolbarContainer #HeaderStandardLinks .HeaderStandardLinksLabel .primary,
+#MobileMenuDropDown #MobileMenuNavigationLinks li
+{
+  font-size: 16px;
+}
+
+</style>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato:400italic,600italic,700italic,400,600,700">
+<style>
+
+#DynamicDropDown h1,
+#DynamicDropDown h2,
+#DynamicDropDown h3,
+#DynamicDropDown h4,
+#DynamicDropDown h5,
+#DynamicDropDown h6,
+#CGBanner h1,
+#CGBanner h2,
+#secMainContent h1,
+#secMainContent h2,
+#secMainContent h3,
+#secMainContent h4,
+#secMainContent h5,
+#secMainContent h6,
+#ooeAramarkCategoryGrid .ooeAramarkCategoryGridCategoryGroupBoxDisplayTitle,
+#secMainContent #menu-grid.ooe .box-title,
+#secMainContent #menu-grid.ooe .tile-title,
+#AcctInfoTD .paneTabs .leftRoundActive,
+#acctComments legend,
+#acctComments legend a,
+#secMainContent #myAccountContent #myAccountWelcome,
+#secMainContent #CTXProductDescription #productLeft .pdproductname,
+#secMainContent #CTXProductDescription #productRight .pdproductheading,
+#secMainContent #CTXProductDescription #productRight .featureTitle,
+#secMainContent #CTXProductDescription #productRight .pdproductaddons .pdproductcomponentsheader,
+#secMainContent #CTXProductDescription #productRight .pdproductincludedaddons .pdproductcomponentsheader,
+#secMainContent #CTXProductDescription #productRight .pdproductdescription .pdproductcomponentsheader,
+#frmPlaceOrder .sectionHeading,
+#frmPlaceOrder .sectionHeadingOn,
+#secMainContent #CTXProductList .productName,
+#secMainContent #CTXProductDescription #productRight .pdaddon .pdaddonname .addonlabel,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsGroup .MenuGridButtons,
+#secMainContent .MenuGridButtonsContainer .MenuGridButtonsHeader,
+#ProductComponentNutritionModal h1,
+.myAccountPane .paneContent .ADOrderHeader,
+#AllDayOrderCreationModal #ADOmodal_Title h1,
+#AllDayOrderTransferItemsnModal #ADOmodal_Title h1,
+#GroupOrderModal #GroupOrderModal_ShareLinkTitle h3,
+#GroupOrderModal #GroupOrderModal_Title h1,
+#GroupOrderSubmitModal #GroupOrderSubmitModal_Title h1,
+#GroupOrderParticipantModal #GroupOrderParticipantModal_Title h1,
+#TakeoutModal #TakeoutModal_Title h1,
+#MiniCart #OOECartWrapper #OOECartConfirmSaveAndExitAlert #OOECartConfirmSaveAndExitMessage h3,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderCheckoutAlert #OOECartConfirmGroupOrderCheckoutMessage h3,
+#MiniCart #OOECartWrapper #OOECartConfirmGroupOrderParticipantExitAlert #OOECartConfirmGroupOrderParticipantExitMessage h3,
+#AllDayOrderCreationModal #ADOmodal_ServiceTimeTitle h2,
+#AllDayOrderCreationModal #ADOmodal_CreateMSG #ADOmodal_CreateMSGTitle,
+#frmPlaceOrder #divCartBody fieldset table .orderGroupLabel,
+#GroupOrderRecallCartModal #GroupOrderRecallCartModal_Title h1,
+#GroupOrderModal #GroupOrderModal_CustomerAccountInformation_Title h1,
+#GroupOrderRemoveParticipantModal #GroupOrderRemoveParticipantModal_Title h1, .GroupOrderRemoveParticipantModal_ParticipantNameLabel
+{
+  font-family: Lato;
+}
+
+#secMainContent #CTXProductDescription .pdproduct #productLeft .pdproductname .ProductCalorieInfo
+{
+  font-family: Open Sans;
+}
+
+@media only screen and (max-width: 800px){}</style>
+
+<script>
+  var loginRedirect = "current";
+  var footerImg = "https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/sodexo_logo_white.png";
+  
+  var mobileView = false;
+  if ($(window).width() <= 800) {
+    mobileView = true;
+  }
+
+  var cartCount = 0;
+
+  var mobileCompanyBanner = "";
+  var companyBanner = "https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Home-White.png";
+  var CompanyName = "miSofi Demo Site 2";
+
+</script>
+
+<!-- Favicons
+================================================== -->
+<link rel="SHORTCUT ICON" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon.png">
+<link rel="apple-touch-icon" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_60.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_76.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_152.png">
+<link rel="shortcut icon" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_60.png">
+<link rel="shortcut icon" sizes="76x76" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_76.png">
+<link rel="shortcut icon" sizes="120x120" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_120.png">
+<link rel="shortcut icon" sizes="152x152" href="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/miSofi_Favicon_152.png">
+
+<style type="text/css">
+@font-face {
+font-weight: 400;
+font-style:  normal;
+font-family: 'Circular-Loom';
+
+src: url('https://cdn.loom.com/assets/fonts/circular/CircularXXWeb-Book-cd7d2bcec649b1243839a15d5eb8f0a3.woff2') format('woff2');
+}
+
+@font-face {
+font-weight: 500;
+font-style:  normal;
+font-family: 'Circular-Loom';
+
+src: url('https://cdn.loom.com/assets/fonts/circular/CircularXXWeb-Medium-d74eac43c78bd5852478998ce63dceb3.woff2') format('woff2');
+}
+
+@font-face {
+font-weight: 700;
+font-style:  normal;
+font-family: 'Circular-Loom';
+
+src: url('https://cdn.loom.com/assets/fonts/circular/CircularXXWeb-Bold-83b8ceaf77f49c7cffa44107561909e4.woff2') format('woff2');
+}
+
+@font-face {
+font-weight: 900;
+font-style:  normal;
+font-family: 'Circular-Loom';
+
+src: url('https://cdn.loom.com/assets/fonts/circular/CircularXXWeb-Black-bf067ecb8aa777ceb6df7d72226febca.woff2') format('woff2');
+}</style></head>
+<body data-new-gr-c-s-check-loaded="14.1052.0" data-gr-ext-installed="">
+
+<div id="MiniCartOverlay"></div>
+<div id="MiniCart"></div>
+<div id="FOHEToolbar" class="" style="height: 68px;">
+<div id="ToolbarContainer" class="">
+
+  <div id="headerLogo">
+    
+      <a id="CompanyLogo" href="https://misofitraining2.catertrax.com/index.asp?&amp;intOrderID=&amp;intCustomerID=" border="0" style="border:none" title="Home">
+    
+        <img src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Home-White.png" alt="">
+      
+    </a>
+    
+      <div id="CompanyTagline">miSofi Demo Site 2</div>
+    
+  </div>
+  
+  <div id="HeaderNavigation">
+    
+    <div id="MobileMenuLink" class="">
+      <div class="fa fa-2x fa-bars "></div>
+    </div>
+    <ul id="NavigationLinks" class="links"><li><a href="index.asp?#DiningCard" target="">CAFÉS</a></li><li><a class="hasChildren" href="Javascript:void(0)" target="">CATERING</a><ul class="secondary_links hidden"><li><a class="CustomD3Link" href="/flavours.html" target="" customdropdownid="1551">FLAVOURS</a></li><li><a class="CustomD3Link" href="Javascript:void(0)" target="" customdropdownid="1547">SIMPLY&nbsp;TO&nbsp;GO</a></li><li><a class="CustomD3Link" href="Javascript:void(0)" target="" customdropdownid="1548">ELEMENTS</a></li></ul></li><li><a class="CustomD3Link" href="Javascript:void(0)" target="" customdropdownid="1550">PERSONAL ORDERING</a></li></ul><div role="button" id="moreLink" count="3">More</div><ul id="MoreNavigationLinks" class="hidden-links hidden"><li><a href="https://misofitraining2.catertrax.com/shop_res2.asp?intOrderID=&amp;intCustomerID=" target="">ROOM RESERVATIONS</a></li><li><a href="index.asp#Explore" target="">EXPLORE</a></li><li><a href="https://misofitraining2.catertrax.com/shopportal.asp?pageref=ContactUs&amp;intOrderID=&amp;intCustomerID=" target="">CONTACT US</a></li></ul>
+  </div>
+  
+  <div id="HeaderStandardLinks">
+    
+      <div id="SearchLink">
+        <div class="fa fa-search"></div>
+      </div>
+    
+        <div id="AccountLoginLink">
+          <div class="fa fa-user"></div>
+          <div id="HeaderStandardLinksLabel" class="HeaderStandardLinksLabel">
+            
+              <div class="primary">Account</div>
+              
+                <div class="secondary unauthenticated_Account">
+                SIGN IN / REGISTER
+              
+              </div>
+            
+          </div>
+        </div>
+      
+      <a id="MiniCartLink" href="javascript:void(0)">
+      
+        <div id="desktopCartIcon" class="fa cartIcon-stack fa-shopping-cart" data-count="0"></div>
+        <div id="HeaderStandardLinksLabel" class="HeaderStandardLinksLabel"><div class="primary">Cart</div><div id="CartPrice" class="secondary">$0.00</div></div>
+        <div id="CartAlert"></div>
+        <script>
+          UpdateMiniCartLinkCountAndPrice();
+          function UpdateMiniCartLinkCountAndPrice() {
+            var subtotal = 0;
+            var productCount = 0;
+            $.ajax({
+              type: "GET",
+              dataType: 'json',
+              url: '/getorderinfo.asp?cmd=ooecart',
+              async: false,
+              success: function (d) {
+                if (Array.isArray(d)) {
+                  d = d[0];
+                  if (d.oi != undefined) {
+                    if (d.itemcount != undefined){
+                      productCount = d.itemcount;
+                    }
+                    if (d.ordergrandtotal != undefined){
+                      subtotal = d.ordergrandtotal;
+                    }
+                  } else if (d.segments != undefined) {
+                    if (d.adoitemcount != undefined){
+                      productCount = d.adoitemcount;
+                    }
+                    if (d.adograndtotal != undefined){
+                      subtotal = d.adograndtotal;
+                    }
+                  }
+                }
+              },
+              complete: function (d) {
+                $('#desktopCartIcon').attr('data-count',productCount.toString());
+                var nonEscapedCurrancySymbol = '$';
+                if (nonEscapedCurrancySymbol == '$$') { nonEscapedCurrancySymbol = '$'; }
+                $('#CartPrice').html(nonEscapedCurrancySymbol + parseFloat(subtotal).toFixed(2));
+              },
+              cache: false
+            });
+          }
+        </script>
+      </a>
+    
+  </div>
+  
+</div>
+
+<div id="DynamicDropDown">
+  <div id="DynamicDropDownView"></div>
+  <div id="DropDowns">
+    <div id="MobileMenuDropDown" class="drop-down-container"></div>
+    
+      <div id="SearchDropDown" class="drop-down-container">
+        
+        <div id="searchD3ContainerTitle" class="drop-down-info">
+          <h2>Which menu would you like to search?</h2>
+        </div>
+        <div id="searchD3ContainerMenuSelection">
+          <div id="searchDropWin" class="cats"><div class="searchDropInstr"></div><div class="searchAffNameLabel">Catering</div><div class="catRadio"><label for="cat1">Flavours Catering Gatherings:Perfected<input type="radio" id="cat1" name="catgrp" data-affid="1" value="9"><span class="radiobutton"></span></label></div><div class="catRadio"><label for="cat2">elements Catering Gatherings:Perfected<input type="radio" id="cat2" name="catgrp" data-affid="1" value="7"><span class="radiobutton"></span></label></div><div class="catRadio"><label for="cat3">Simply to Go Catering Gatherings:Perfected<input type="radio" id="cat3" name="catgrp" data-affid="1" value="8"><span class="radiobutton"></span></label></div><div class="catRadio"><label for="cat4">Hissho Sushi<input type="radio" id="cat4" name="catgrp" data-affid="1" value="6"><span class="radiobutton"></span></label></div><div class="searchAffNameLabel">Take-Out</div><div class="catRadio"><label for="cat5">Personal Ordering Take-Out Menu<input type="radio" id="cat5" name="catgrp" data-affid="2" value="10"><span class="radiobutton"></span></label></div><div class="searchAffNameLabel">Office Coffee</div><div class="catRadio"><label for="cat6">Office Coffee<input type="radio" id="cat6" name="catgrp" data-affid="4" value="4"><span class="radiobutton"></span></label></div></div>
+        </div>
+        <div id="searchD3ContainerSeachfield">
+          <input type="text" id="searchKeyword" name="search" autocomplete="off">
+          <input type="submit" id="d3SearchButton" value="Go">
+        </div>
+        <span role="button" class="drop-down-close"><i class="drop-down-close-icon fa fa-times" aria-role="close"></i><span class="drop-down-close-text">Back</span></span>
+      </div>
+    
+    <div id="AccountDropDown" class="drop-down-container">
+      <div id="ssnLoginSidebar" class="sideBox drop-down-content">
+      <div class="drop-down-info">
+        <h2>SIGN IN OR REGISTER</h2><p>Sign in to your account to start a new order or manage your existing orders, or get started by registering for an account<br><br>
+      </p></div>
+      <form onsubmit="redirectOnLogin()" returnurl="%2Findex%2Easp%3F" action="https://misofitraining2.catertrax.com/shoplogin.asp?intOrderID=&amp;intCustomerID=" method="post" id="OOELoginForm" name="myform" style="margin: 0; padding: 0;">
+    
+          <table style="width: 100%;">
+        <tbody><tr class="Loginstrlastname"><td class="td1 loginLabel">Last&nbsp;Name</td><td class="td2 loginInput"><input tabindex="1" type="text" value="" name="strlastname" class="loginBx" id="Text3"></td></tr><tr class="Loginstremail"><td class="td1 loginLabel">Email</td><td class="loginInput"><input tabindex="2" type="text" name="stremail" value="" class="loginBx" id="Text4"></td><td class="td3 loginHelp">
+            <a href="https://misofitraining2.catertrax.com/shopcustadminlogin.asp?custstat=new&amp;intOrderID=&amp;intCustomerID="><span class="sr-only">login</span></a>
+        </td></tr><tr class="LoginstrPassword"><td class="td1 loginLabel">Password&nbsp;</td><td class="loginInput"><input tabindex="3" type="password" autocomplete="off" maxlength="99" name="strPassword" class="loginBx" id="Password1"><span id="password-toggle" class="fa fa-fw fa-eye"></span></td><td class="td3 loginHelp"><a href="https://misofitraining2.catertrax.com/shopmailpwd.asp?custstat=new&amp;intOrderID=&amp;intCustomerID=">Need your&nbsp;password?</a></td></tr><input type="hidden" id="CSRFToken" name="CSRFToken" value="3aa79cdba64337e288ad98db8b06b56f"><tr class="loginSubmit"><td colspan="2" align="center" class="td3"><input tabindex="4" type="submit" name="Submit" value="SIGN IN" class="loginBtn"></td></tr>
+            <!--<tr>
+              <td class="td1">Last&nbsp;Name:</td>
+              
+                <td class="td2"><input tabindex="1" type="text" name="strlastname" class="loginBx" id="Text3" /></td>
+              
+            </tr>
+            <tr>
+              <td class="td1">
+                Password&nbsp;:
+                
+              </td>
+              <td>
+                
+                  <input tabindex="2" type="password" name="strpassword" class="loginBx" id="Password1" autocomplete="off"/>
+                
+              </td>
+            </tr>
+            
+              <tr><td colspan="2" align="center" class="td3">
+            
+                <input tabindex="3" type="submit" name="Submit" value="SIGN IN" class="loginBtn" />
+              
+              </td></tr>
+            -->
+          </tbody></table>
+        
+      </form>
+    
+  </div>
+ 
+      <span role="button" class="drop-down-close"><i class="drop-down-close-icon fa fa-times" aria-role="close"></i><span class="drop-down-close-text">Back</span></span>
+    </div>
+    
+  <div id="CustomLinkDropDown1551" class="drop-down-container"><div id="CustomLinkD3Content1551" class="drop-down-info"><div class="D3MenuContainer">
+<div class="D3TitleBlock">
+<br>
+<img style="max-width: 200px; flex-shrink: 0; align-self:flex-start" alt="" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Flavours.png">
+<div class="banner_content_container"><div class="banner_content_label">Blank</div><div class="banner_content"></div></div>
+<br>
+<div style="text-align: left; font-size: 14px;"><a href="shoppolicies.asp?x=x">Catering Policies</a></div>
+<br>
+<br>
+</div>
+<div class="D3MenuList"><div class="D3MenuColumn1"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=72&amp;intCustomerID=">Breakfast</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=73&amp;intCustomerID=">Beverages</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=80&amp;intCustomerID=">Premium Takeaway Sandwiches</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=79&amp;intCustomerID=">Premium Takeaway Salads</a></li></ul></div><div class="D3MenuColumn2"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=83&amp;intCustomerID=">Designer Buffets</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=77&amp;intCustomerID=">Served Lunches and Dinners</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=74&amp;intCustomerID=">Receptions</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=84&amp;intCustomerID=">Chef`s Fare</a></li></ul></div><div class="D3MenuColumn3"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=76&amp;intCustomerID=">Dessert Stations and Bars</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=81&amp;intCustomerID=">A la Carte Desserts and Snacks</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;c=82&amp;intCustomerID=">Sheet Cakes</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=9&amp;intCustomerID=">View All &gt;</a></li></ul></div></div></div>
+</div><span role="button" class="drop-down-close"><i class="drop-down-close-icon fa fa-times"></i><span class="drop-down-close-text">Back</span></span></div><div id="CustomLinkDropDown1547" class="drop-down-container"><div id="CustomLinkD3Content1547" class="drop-down-info"><div class="D3MenuContainer">
+<div class="D3TitleBlock">
+<br>
+<img style="max-width: 200px; flex-shrink: 0; align-self:flex-start" alt="" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Simply_to_Go_logo.png ">
+<br>
+<div style="font-size: 14px; text-align: left;"><a href="shoppolicies.asp?x=x">Catering Policies</a></div>
+<br>
+<br>
+</div>
+<div class="D3MenuList"><div class="D3MenuColumn1"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=59&amp;intCustomerID=">Good Morning Breakfast Boxes</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=61&amp;intCustomerID=">Classic Sandwich Boxes</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=64&amp;intCustomerID=">Select Sandwich Boxes</a></li></ul></div><div class="D3MenuColumn2"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=65&amp;intCustomerID=">Salad Selections</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=63&amp;intCustomerID=">Group Meal Boxes</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=60&amp;intCustomerID=">Simply to Go Beverages</a></li></ul></div><div class="D3MenuColumn3"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;c=62&amp;intCustomerID=">Treats and Snacks</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=8&amp;intCustomerID=">View All &gt;</a></li></ul></div></div></div>
+
+</div><span role="button" class="drop-down-close"><i class="drop-down-close-icon fa fa-times"></i><span class="drop-down-close-text">Back</span></span></div><div id="CustomLinkDropDown1548" class="drop-down-container"><div id="CustomLinkD3Content1548" class="drop-down-info"><div class="D3MenuContainer">
+<div class="D3TitleBlock">
+<br>
+<img style="max-width: 200px; flex-shrink: 0; align-self:flex-start" alt="" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/elements_logo.png ">
+<br>
+<div style="font-size: 14px; text-align: left;"><a href="shoppolicies.asp?x=x">Catering Policies</a></div>
+<br>
+<br>
+</div>
+<div class="D3MenuList"><div class="D3MenuColumn1"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=48&amp;intCustomerID=">EZ Party Packages</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=51&amp;intCustomerID=">Birthday Package</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=52&amp;intCustomerID=">Hot Trays and Platters</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=53&amp;intCustomerID=">Cold Trays and Platters</a></li></ul></div><div class="D3MenuColumn2"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=49&amp;intCustomerID=">Breaktime</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=54&amp;intCustomerID=">Snacks</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=55&amp;intCustomerID=">Sub Sandwiches</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=56&amp;intCustomerID=">Picnics</a></li></ul></div><div class="D3MenuColumn3"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=57&amp;intCustomerID=">Theme Buffets</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=58&amp;intCustomerID=">Beverages</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;c=50&amp;intCustomerID=">Paper Supplies</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=1&amp;cg=7&amp;intCustomerID=">View All &gt;</a></li></ul></div></div></div>
+
+</div><span role="button" class="drop-down-close"><i class="drop-down-close-icon fa fa-times"></i><span class="drop-down-close-text">Back</span></span></div><div id="CustomLinkDropDown1550" class="drop-down-container"><div id="CustomLinkD3Content1550" class="drop-down-info"><div class="D3MenuContainer">
+<div class="D3TitleBlock"><br>
+<h2>PERSONAL ORDERING MENU</h2>
+<br>
+<strong>Ordering from your phone?</strong>Save time by setting up your<a href="shopcustadmin.asp?x=x target=" _blank"="" "=""> online wallet</a> at your desktop for a fast and easy checkout.</div>
+<br>
+<div class="D3MenuList"><div class="D3MenuColumn1"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;c=112&amp;intCustomerID=">Breakfast</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;c=113&amp;intCustomerID=">Build Your Own Sandwich</a></li></ul></div><div class="D3MenuColumn2"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;c=114&amp;intCustomerID=">Sandwiches and Wraps</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;c=115&amp;intCustomerID=">Salads</a></li></ul></div><div class="D3MenuColumn3"><ul><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;c=116&amp;intCustomerID=">Beverages, Sides and Desserts</a></li><li class="ParentCategory"><a href="menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;intCustomerID=">View All &gt;</a></li></ul></div></div></div>
+
+</div><span role="button" class="drop-down-close"><i class="drop-down-close-icon fa fa-times"></i><span class="drop-down-close-text">Back</span></span></div></div>
+</div>
+
+</div>
+
+<script>
+var D3searchClick = function(e){
+
+  var keyword = $('#searchKeyword').val();
+  var radioVal = $("input:radio[name ='catgrp']:checked").val();
+      var affval = $("input:radio[name ='catgrp']:checked").attr("data-affid");
+  var selectVal = $("#catgrp").val();
+  var catVal = "";
+  var searchPath = "";
+  
+  if (radioVal === undefined && affval === undefined) {
+    radioVal = $("#SearchCatgrpSelect option:selected").val();
+    affval = $("#SearchCatgrpSelect option:selected").attr("data-affid");
+  }
+  
+  //no search word
+  if( keyword == ''){
+    return false;
+  }
+  
+  if ($('#searchDropWin').hasClass('cats')) {
+
+    //cat group needed
+    if ( radioVal  == undefined ){
+      return false;
+    } 
+    catVal = radioVal;
+    if (affval == "NOAFF"){
+      affval ="";
+      searchPath = "/product.asp#c:" + catVal + "|s:" + keyword;
+    }else
+    {   
+      searchPath = "/product.asp#c:" + catVal + "|s:" + keyword + "|a:" + affval;
+    }
+  } 
+  else {
+
+    //only search word no cat group
+          affval ="";
+    searchPath = "/product.asp#s:" + keyword;
+  }
+
+  //redirect to menu page with search parameters or process parameters if on menu
+  if ( window.location.href.toLowerCase().indexOf('product.asp') != -1 ) {
+    
+      BuildCatGroupBanner(catVal)
+    
+    if(viewType == viewTypes.mobile && mobileMenu.isOpen) {
+      mobileMenu.close()
+    } else {
+      d3.collapse();
+      closeMoreLinks();
+      closeSecondLevelLinks();
+    }
+    
+
+    removeHash('p', '');
+    removeHash('m', '');
+    removeHash('l', '');
+    displayFOHEProdDetails = false;
+
+
+    setHash('s', keyword);
+          if (typeof(affval) != "undefined"){ if (affval.length > 0)
+      setHash("a", affval);
+    }
+    if (catVal.length > 0)
+      setHash('c', catVal);
+    processHash();
+    reloadHash();
+    $('#navkeyword').val('Search');
+
+  
+  }
+  else {
+    window.location = searchPath;
+  }
+  $('#searchKeyword').val("");
+  return false;
+}
+
+$('#d3SearchButton').click(D3searchClick);
+
+$('#searchKeyword').on('keyup', function (e) {
+  if (e.keyCode == 13) {
+    D3searchClick();
+  }
+});
+
+
+
+</script>
+
+
+<div id="FOHEToolbarPageShift" style="height: 69px;"></div>
+<!--=========================-->
+<!-- FOHE SCRIPTS -->
+<!--=========================-->
+<script type="text/javascript" src="/corp_templates/fohe/scripts/fohe.js"></script>
+<script type="text/javascript" src="/corp_templates/fohe/scripts/helpers.js"></script>
+<script type="text/javascript" src="/corp_templates/fohe/scripts/d3.js"></script>
+<script type="text/javascript" src="/corp_templates/fohe/scripts/customlinkdropdown.js"></script>
+<script type="text/javascript" src="/corp_templates/fohe/scripts/mobilemenu.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.min.js" integrity="sha256-oh7N5nthuhldTk8/34Za7FXv3BkeVN9vAnYk/pLfC78=" crossorigin="anonymous"></script>
+
+<script id="CartTemplate" type="text/x-handlebars-template">
+<div id="OOECartWrapper">
+  <div id="OOECartHeader" class="bgColorJ">
+    <div id="OOECartItemCount">{{itemcount}} Item(s) in Cart</div>
+    <div id="OOECloseMiniCart" class="fa fa-times" role="button"></div>
+    <div id="OOECartHeaderLinks"></div>
+  </div>
+  <div id="OOECartEventInfo">
+    {{#ifFirstTrueANDSecondFalse isDTO isGroupOrderParticipantSession}}
+      {{#if MaxParticipantError}}
+        <div id="DTOWarningMessage">
+          <div class="fa fa-exclamation-triangle DTOWarningIcon"></div>
+          <div id="DTOWarningMessageText">{{MaxParticipantError}}</div>
+        </div>
+      {{/if}}
+      {{#if warning}}
+        <div id="DTOWarningMessage">
+          <div class="fa fa-exclamation-triangle DTOWarningIcon"></div>
+          <div id="DTOWarningMessageText">{{warning}}</div>
+        </div>
+      {{/if}}
+      {{#if isGroupOrderOrganizer}}
+        {{#if GroupOrderClosedToParticipants}}
+          <div id="GroupOrderClosedToParticipants" value="true" style="display: none;"></div>
+        {{else}}
+          <div id="GroupOrderClosedToParticipants" value="false" style="display: none;"></div>
+        {{/if}}
+        <div id="OOECartGroupOrderInfo">
+          <div id="OOECartGroupOrderDetails"> 
+            <div id="OOECartGroupOrderEventName"><b>Group Order</b> - {{eventname}}</div>
+            <div id="OOECartThrowGroupOrderModalLinks">
+              <div id="OOECartThrowGroupOrderModalShareLink" onclick="miniCart.close(BuildGroupOrderModal())">Share</div>
+              |
+              <div id="OOECartThrowGroupOrderModalEditLink" onclick="miniCart.close(BuildTakeoutModal(true,true))">Edit</div>
+            </div>
+          </div>
+          {{#ifExistsAndNotEquals timeRemaining 0}}
+            <div id="GroupOrderEventInfo">
+              <div id="DTOEventInfoDeliveryMethod">{{deliverymethod}}</div>
+              <div id="DTOEventInfoDateAndTime">{{eventdate}} at {{eventtime}}</div>
+            </div>
+          {{/ifExistsAndNotEquals}}
+          {{#if HasParticipants}}
+            <div id="OOECartRemoveParticipantsGroupOrderModal" onclick="miniCart.close(BuildRemoveParticipantGroupOrderModal())">Remove Participants</div>
+          {{/if}}
+        </div>
+      {{else}}
+        {{#ifExistsAndNotEquals timeRemaining 0}}
+            <div id="DTOEventInfoComplete">
+              <div id="DTOEventInfo">
+                <div id="DTOEventInfoDeliveryMethod">{{deliverymethod}}</div>
+                <div id="DTOEventInfoDateAndTime">{{eventdate}} at {{eventtime}}</div>
+              </div>
+              <a id="DTOEventInfoEdit" onclick="miniCart.close(BuildTakeoutModal)">Edit</a>
+            </div>
+        {{else}}				
+          <div id="DTOEventInfoIncomplete">
+            <div class="fa fa-calendar-alt DTOCalendarIcon" onclick="miniCart.close(BuildTakeoutModal)"></div>
+            <div id="DTOEventInfoLinkSection" onclick="miniCart.close(BuildTakeoutModal)">
+              <div class="DTOEventInfoLink">Placing an Order?</div>
+              <div class="DTOEventInfoLink" style="font-weight: bold;">Select your Date and Time</div>
+            </div>
+          </div>
+        {{/ifExistsAndNotEquals}}
+      {{/if}}
+    {{else if isGroupOrderParticipantSession}}
+      <div id="OOECartEventDate">Event Date: {{eventdate}} at {{eventtime}}</div>
+    {{else}}
+      {{#if eventdate}}
+        <div id="OOECartEventDate">Event Date: {{eventdate}}</div>
+      {{/if}}
+    {{/ifFirstTrueANDSecondFalse}}
+  </div>
+  <div class="OOECartHR"></div>
+  <div id="OOECartBody">
+    <div id="OOECartSegment" class="OOECartSegment">
+      {{#if useGroupLabel}}
+        {{#each orderitemsbygrouplabel as |groupname|}}
+          {{#ifExistsAndNotEquals @key "undefined"}}
+            {{#each groupname}}
+              {{#if ../../isGroupOrderOrganizer}}
+                {{#ifFirstTrueANDSecondTrue @first complete}}
+                  <div class="OOECartGroupLabel fontColorL">{{GroupLabel}}</div>
+                {{/ifFirstTrueANDSecondTrue}}
+              {{else}}
+                {{#if @first}}
+                  <div class="OOECartGroupLabel fontColorL">{{GroupLabel}}</div>
+                {{/if}}
+              {{/if}}
+            {{/each}}
+          {{else}}
+            {{#if ../isGroupOrderOrganizer}}
+              <div class="OOECartGroupLabel fontColorL">Other Items</div>
+            {{else}}
+              {{#unless @first}}
+                <div class="OOECartGroupLabel fontColorL">Other Items</div>
+              {{/unless}}
+            {{/if}}
+          {{/ifExistsAndNotEquals}}
+          {{#each groupname}}
+            {{#if ../../isGroupOrderOrganizer}}
+              {{#if complete}}
+                {{#if isEmptyParticipant}}
+                  <div class="OOECartSegmentMessageContainer">
+                    <div class="OOECartSegmentMessage">There are no items for this participant.</div>
+                  </div>
+                {{else}}					
+                  <div id="OOECartSegmentItem{{orderitemid}}" class="OOECartSegmentItem">
+                    <div 
+                      {{#ifEquals quantity minimumquantity}}
+                        class="OOECartSegmentSubtractItemQuantity" 
+                        aria-label="minus"
+                      {{else}}
+                        class="OOECartSegmentSubtractItemQuantity fa fa-minus" 
+                        aria-label="minus"
+                        onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} - 1) )"
+                      {{/ifEquals}}
+                    ></div>
+                    <div class="OOECartSegmentItemQuantity">{{quantity}}</div>
+                    <div class="OOECartSegmentAddItemQuantity fa fa-plus" aria-label="plus" onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} + 1) )"></div>
+                    <div class="OOECartSegmentItemName">{{name}}</div>						
+                    <div class="OOECartSegmentItemTotal">${{formatCurrency subtotal}}</div>
+                    <div class="OOECartSegmentRemoveItem fa fa-trash" role="button"></div>
+                  </div>
+                {{/if}}
+              {{/if}}
+            {{else}}
+              {{#if isEmptyParticipant}}
+                <div class="OOECartSegmentMessageContainer">
+                  <div class="OOECartSegmentMessage">There are no items for this participant.</div>
+                </div>
+              {{else}}	
+                <div id="OOECartSegmentItem{{orderitemid}}" class="OOECartSegmentItem">
+                  <div 
+                    {{#ifEquals quantity minimumquantity}}
+                      class="OOECartSegmentSubtractItemQuantity" 
+                      aria-label="minus"
+                    {{else}}
+                      class="OOECartSegmentSubtractItemQuantity fa fa-minus" 
+                      aria-label="minus"
+                      onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} - 1) )"
+                    {{/ifEquals}}
+                  ></div>
+                  <div class="OOECartSegmentItemQuantity">{{quantity}}</div>
+                  <div class="OOECartSegmentAddItemQuantity fa fa-plus" aria-label="plus" onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} + 1) )"></div>
+                  <div class="OOECartSegmentItemName">{{name}}</div>						
+                  <div class="OOECartSegmentItemTotal">${{formatCurrency subtotal}}</div>
+                  <div class="OOECartSegmentRemoveItem fa fa-trash" role="button"></div>
+                </div>
+              {{/if}}
+            {{/if}}
+          {{/each}}
+          {{#unless @last}}
+            {{#if ../isGroupOrderOrganizer}}
+              {{#if 0.complete}}
+                <div class="OOECartHR"></div>
+              {{/if}}
+            {{else}}
+              <div class="OOECartHR"></div>
+            {{/if}}
+          {{/unless}}
+        {{/each}}
+      {{else}}
+        {{#each oi}}
+          <div id="OOECartSegmentItem{{orderitemid}}" class="OOECartSegmentItem">
+            <div 
+              {{#ifEquals quantity minimumquantity}}
+                class="OOECartSegmentSubtractItemQuantity" 
+                aria-label="minus"
+              {{else}}
+                class="OOECartSegmentSubtractItemQuantity fa fa-minus" 
+                aria-label="minus"
+                onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} - 1) )"
+              {{/ifEquals}}
+            ></div>
+            <div class="OOECartSegmentItemQuantity">{{quantity}}</div>
+            <div class="OOECartSegmentAddItemQuantity fa fa-plus" aria-label="plus" onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} + 1) )"></div>
+            <div class="OOECartSegmentItemName">{{name}}</div>						
+            <div class="OOECartSegmentItemTotal">${{formatCurrency subtotal}}</div>
+            <div class="OOECartSegmentRemoveItem fa fa-trash" role="button"></div>
+          </div>
+        {{/each}}
+      {{/if}}
+    </div>
+
+    <div class="OOECartHR"></div>
+    <div id="OOECartGrandTotal">
+      <div id="OOECartGrandTotalLabel" class="fontColorL">Total</div>
+      <div id="OOECartGrandTotalValue" class="fontColorL">${{formatCurrency ordergrandtotal}}</div>
+    </div>
+    
+      {{#if customersignedin}}
+        {{#if allowcoupon}}
+          <div id="OOECartApplyCouponContainer">
+          {{#if isGroupOrderOrganizer}}
+            <a id="OOECartApplyCouponLinkForGroupOrganizer">Apply Promo Code <div class="fas fa-chevron-right"></div></a>
+          {{else}}
+            <a id="OOECartApplyCouponLink">Apply Promo Code <div class="fas fa-chevron-right"></div></a>
+          {{/if}}
+          </div>
+        {{/if}}
+      {{/if}}
+    
+  </div>
+  <div id="OOECartFooter">
+    {{#if showguestcheckout}}
+    <div id="OOECartContinueAsGuestForm" style='display:none;'>
+      <div id="OOECartContinueAsGuestFormTitle">Guest Checkout</div>
+      <div id="OOECartGuestEmailContainer">
+        <label for="stremail">* Contact Email</label>
+        <input id="stremail" name="stremail" type="email"/>
+      </div>
+      <div id="hideguestcheckoutbutton" class="far fa-times-circle"></div>
+      <div id="OOECartApplyCouponContainer">
+        
+            {{#if allowcoupon}}
+              <a id="OOECartGuestApplyCouponLink">Apply Promo Code <div class="fas fa-chevron-right"></div></a>
+            {{/if}}	
+        
+      </div>
+      <div id="OOECartGuestEmailError" style='display:none;'></div>
+    </div>
+    {{/if}}
+
+    {{#unless isGroupOrderParticipantSession}}
+      {{#if isGroupOrderOrganizer}}
+        <div id="OOECartOrganizerCancelButtons">
+          <div role="button" id="OOECartConfirmSaveAndExitButton">Save Group Order and Exit</div>
+      {{/if}}
+        <div role="button" id="OOECartCancelOrderButton">Cancel Order</div>
+      {{#if isGroupOrderOrganizer}}
+        </div>
+      {{/if}}
+    {{/unless}}
+
+      {{#if customersignedin}}
+        
+            {{#if isGroupOrderOrganizer}}
+            <div id="OOECartCheckoutButtonWrap" class="GroupOrderOrganizerIEStyle">
+              <div role="button" id="OOECartCheckoutButtonForGroupOrderOrganizer">Check Out</div>
+            {{else}}
+            <div id="OOECartCheckoutButtonWrap">
+              <div role="button" id="OOECartCheckoutButton">Check Out</div>
+            {{/if}}
+        
+      {{else}}
+        {{#if isGroupOrderParticipantSession}}
+        <div id="OOECartCheckoutButtonWrap">
+          <div id="OOECartExitGroupOrderParticipant">
+            <div id="OOECartExitGroupOrderParticipantUpperText">
+              Exit Group Order
+            </div>
+            <div id="OOECartExitGroupOrderParticipantLowerText">
+              Selections will not be saved.
+            </div>
+          
+          </div>
+          <br id="ButtonLineBreak"/><br id="ButtonLineBreak"/>
+          <div role="button" id="OOECartCheckoutButtonForGroupOrderParticipant" onclick="BuildGroupOrderSubmitModal()">Submit Your Order</div>
+        {{else}}
+        <div id="OOECartCheckoutButtonWrap">
+          <div role="button" id="OOECartCheckoutButton">Sign In / Register to Check Out</div>
+        {{/if}}
+      {{/if}}
+    </div>
+    {{#if showguestcheckout}}
+      <div role="button" id="OOECartContinueAsGuestButton">or Continue as Guest</div>
+      <div id="OOECartGuestCheckoutButtonWrap" style="display:none;">
+        
+          <div role="button" id="OOECartGuestCheckoutButton">Check Out</div>
+        
+      </div>
+    {{/if}}
+    <div id="OOECartClear"></div>
+  </div>
+  {{#if isGroupOrderOrganizer}}
+    <div id="OOECartConfirmSaveAndExitAlert" style='display:none;'>
+      <div id="OOECartConfirmSaveAndExitMessage"> 
+        <h3> Ready to Save and Exit Your Group Order? </h3>
+        <p> Choosing Save and Exit will save your order and clear your cart so you can start a new order. You will be able to review and finalize this Group Order from your Account. </p>
+      </div>
+      <div id="OOECartConfirmSaveAndExitButtons">
+        <div role="button" id="OOECartConfirmSaveAndExitNo">Cancel</div>
+        <div role="button" id="OOECartConfirmSaveAndExitYes">Save and Exit</div>
+      </div>
+    </div>
+    <div id="OOECartConfirmGroupOrderCheckoutAlert" style='display:none;'>
+      <div id="OOECartConfirmGroupOrderCheckoutMessage"> 
+        <h3> Ready to Close Your Group Order? </h3>
+        <p> You will still be able to add or modify items in the order for you or any of your guests. </p>
+      </div>
+      <div id="OOECartConfirmGroupOrderCheckoutButtons">
+        <div role="button" id="OOECartConfirmGroupOrderCheckoutNo">Wait</div>
+        <div role="button" id="OOECartConfirmGroupOrderCheckoutYes">Yes, Continue</div>
+      </div>
+    </div>
+  {{/if}}
+  {{#if isGroupOrderParticipantSession}}
+    <div id="OOECartConfirmGroupOrderParticipantExitAlert" style='display:none;'>
+      <div id="OOECartConfirmGroupOrderParticipantExitMessage"> 
+        <h3> Leave Group Order? </h3>
+        <p> Are you sure you want to leave the group order? Selections added to the cart will not be saved. </p>
+      </div>
+      <div id="OOECartConfirmGroupOrderParticipantExitButtons">
+        <div role="button" id="OOECartConfirmGroupOrderParticipantExitNo">No</div>
+        <div role="button" id="OOECartConfirmGroupOrderParticipantExitYes">Yes</div>
+      </div>
+    </div>
+  {{/if}}
+  <div id="OOECartConfirmCancelOrderAlert" style='display:none;'>
+        <div id="OOECartConfirmCancelOrderMessage">Are you sure you want to cancel this order?</div>
+        <div id="OOECartConfirmCancelOrderButtons">
+            <div role="button" id="OOECartConfirmCancelOrderNo">No</div>
+            <div role="button" id="OOECartConfirmCancelOrderYes">Yes</div>
+        </div>
+    <div>
+</div>
+</script>
+<script id="ADOCartTemplate" type="text/x-handlebars-template">
+<div id="OOECartWrapper">
+  <div id="OOECartHeader" class="bgColorJ">
+    <div id="OOECartItemCount">{{adoitemcount}} Item(s) in Cart</div>
+    <div id="OOECloseMiniCart" class="fa fa-times" role="button"></div>
+    <div id="OOECartHeaderLinks"></div>
+  </div>
+  <div id="OOECartMasterInvoiceInfo">
+    <div id="OOECartMasterInvoiceName" class="fontColorL">{{adoname}}</div>
+    <div id="OOECartMasterInvoiceDetails">
+      <div id="OOECartEventDate">Event Date: {{adodate}}</div>
+      <div id="OOECartThrowADOModal">Edit Service Times</div>
+    </div>
+  </div>
+  <div class="OOECartHR"></div>
+  <div id="OOECartBody">
+    <!-- for each segment -->
+    {{#each segments}}
+    <div id="OOECartSegment{{orderid}}" class="OOECartSegment">
+      <div class="OOECartSegmentName fontColorL">{{eventname}}</div>
+      {{#each segmentitems}}
+        {{#if name}}
+        <div id="OOECartSegmentItem{{orderitemid}}" class="OOECartSegmentItem">
+          <div 
+            {{#ifEquals quantity minimumquantity}}
+              class="OOECartSegmentSubtractItemQuantity" 
+              aria-label="minus"
+            {{else}}
+              class="OOECartSegmentSubtractItemQuantity fa fa-minus" 
+              aria-label="minus"
+              onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} - 1) )"
+            {{/ifEquals}}
+          ></div>
+          <div class="OOECartSegmentItemQuantity">{{quantity}}</div>
+          <div class="OOECartSegmentAddItemQuantity fa fa-plus" aria-label="plus" onclick="miniCart.changeItemQuantity({{orderitemid}}, ({{quantity}} + 1) )"></div>
+          <div class="OOECartSegmentItemName">{{name}}</div>						
+          <div class="OOECartSegmentItemTotal">${{formatCurrency subtotal}}</div>
+          <div class="OOECartSegmentRemoveItem fa fa-trash" role="button"></div>
+        </div>
+        {{else}}
+          <div class="OOECartSegmentMessageContainer">
+            <div class="OOECartSegmentMessage">There are no items for this service time</div>
+          </div>
+        {{/if}}
+      {{/each}}
+      <!-- end oitem -->
+    </div>
+    <div class="OOECartHR"></div>
+    {{/each}}
+    <!-- end segment -->
+    <div id="OOECartGrandTotal">
+      <div id="OOECartGrandTotalLabel" class="fontColorL">Total</div>
+      <div id="OOECartGrandTotalValue" class="fontColorL">${{formatCurrency adograndtotal}}</div>
+    </div>
+    
+      {{#if customersignedin}}
+        {{#if allowcoupon}}
+          <div id="OOECartApplyCouponContainer">
+            <a id="OOECartApplyCouponLink">Apply Promo Code <div class="fas fa-chevron-right"></div></a>
+          </div>
+        {{/if}}
+      {{/if}}
+    
+  </div>
+  <div id="OOECartFooter">
+    <div role="button" id="OOECartCancelOrderButton">Cancel Order</div>
+    <div id="OOECartCheckoutButtonWrap">
+      {{#if customersignedin}}
+        <div role="button" id="OOECartADOCheckoutButton">Check Out</div>
+      {{else}}
+        <div role="button" id="OOECartCheckoutButton">Sign In / Register to Check Out</div>
+      {{/if}}
+    </div>
+    <div id="OOECartClear"></div>
+  </div>
+  <div id="OOECartConfirmCancelOrderAlert" style='display:none;'>
+        <div id="OOECartConfirmCancelOrderMessage">Are you sure you want to cancel this order?</div>
+        <div id="OOECartConfirmCancelOrderButtons">
+            <div role="button" id="OOECartConfirmCancelOrderNo">No</div>
+            <div role="button" id="OOECartConfirmCancelOrderYes">Yes</div>
+        </div>
+    <div>
+</div>
+</script>
+<script type="text/javascript" src="/corp_templates/fohe/scripts/minicart.js?s=2021S13"></script>
+
+<script src="scripts/dropzone.js"></script>
+<div id="FOHEOverlay"></div>
+<div id="secPage">
+  <div id="pageItemContainer">
+    
+<div id="pageBackgroundContainer" class="fullWidthPageContent">
+
+
+<!-- Start Dynamic Content -->
+<div id="pageContainer">
+
+<div id="secMainContent"><div id="contentArea2" class="contentArea">
+
+<script>
+function ExitGroupOrder() {
+  var CollectionID =  ""
+      $.ajax({
+              async: false,
+              type: "POST",
+              url: '/ajax_GroupOrder.asp',
+              data: {
+                  action:'exitgrouporder',
+                  grouporder: CollectionID,
+              },
+              dataType: 'json',
+      success: function(data) {
+        if (data.result == "error") {
+          ErrorModalDisplay(data.message, true);
+        } else {
+          window.location.replace("http://misofitraining2.catertrax.com")
+        }
+      },
+              cache: false
+          });
+  }
+
+function ErrorModalDisplay(message, redirect) {
+  var html = "<div id='GroupOrderModal'> " + message + "<div class='GroupOrderModal_Footer'><div class='GroupOrderModal_Actions'><div id='GroupOrderModal_Create' class='GroupOrderModalButton2' onclick='$.modal.close()'>Close</div></div></div></div>"
+   $.modal(html, {
+      containerId:'GroupOrderModal',
+      escClose:true,
+      overlayClose:false,
+      focus:false,
+      onShow : function(dlg) {
+          $(dlg.wrap).css('overflow', 'auto');
+
+      },
+      onClose: function () {
+          $.modal.close();
+          if(redirect){
+              document.location.href="/";
+          }
+      }
+  });
+}
+</script><style type="text/css">.fieldset{line-height:normal;}</style><link rel="stylesheet" type="text/css" href="css/reservationStyle.css">
+  <script type="text/javascript">!function(a,b,c,d,e,f,g,h){a.RaygunObject=e,a[e]=a[e]||function(){(a[e].o=a[e].o||[]).push(arguments)},f=b.createElement(c),g=b.getElementsByTagName(c)[0],f.async=1,f.src=d,g.parentNode.insertBefore(f,g),h=a.onerror,a.onerror=function(b,c,d,f,g){h&&h(b,c,d,f,g),g||(g=new Error(b)),a[e].q=a[e].q||[],a[e].q.push({e:g})}}(window,document,"script","//cdn.raygun.io/raygun4js/raygun.min.js","rg4js");</script>
+
+
+<script type="text/javascript" src="/scripts/detectMobileBrowser.js"></script>
+<script type="text/javascript">
+  function loadTemplate(strTemplateName) {
+    if (strTemplateName == "flavor") {
+      document.body.innerHTML +=
+        "<style type='text/css'>" +
+        "	body { background-image: url(../images/flavor_bkg.gif); padding-top: 5px; }" +
+        "	a, a:link, a:visited, a:hover, a:active, a:visited:hover { color: ; }" +
+        "	.standardButton1, .standardButton1:link, .standardButton1:visited, .standardButton1:hover, .standardButton1:active, .standardButton1:visited:hover { border-style: none; background-image: none; }" +
+        "	.standardButton1, .standardButton1:link, .standardButton1:visited { background-color: #CBCBCB; }" +
+        "	.standardButton1:active, .standardButton1:hover, .standardButton1:visited:hover { background-color: ; }" +
+        "	.standardButton2, .standardButton2:link, .standardButton2:visited, .standardButton2:hover, .standardButton2:active, .standardButton2:visited:hover { color: #FFFFFF; border-style: none; background-image: none; }" +
+        "	.standardButton2, .standardButton2:link, .standardButton2:visited { background-color: ; }" +
+        "	.standardButton2:active, .standardButton2:hover, .standardButton2:visited:hover { background-color: #CBCBCB; }" +
+        "	.portalButton, .portalButton:link, .portalButton:visited, .portalButton:hover, .portalButton:active, .portalButton:visited:hover { color: #FFFFFF; border-style: none; margin-left: -2px; }" +
+        "	.portalButton, .portalButton:link, .portalButton:visited { background-color: ; }" +
+        "	.portalButton:active, .portalButton:hover, .portalButton:visited:hover { background-color: #CBCBCB; }" +
+        "	.menu3, .menu3:link, .menu3:visited, .menu3:hover, .menu3:active, .menu3:visited:hover { border-style: none !important; border-width: 0px; }" +
+        "	.menu3, .menu3:link, .menu3:visited { background-color:  !important; }" +
+        "	.menu3:active, .menu3:hover, .menu3:visited:hover { background-color: #CBCBCB !important; }" +
+        "	.menu3, .menu3:link, .menu3:visited, .menu3:hover, .menu3:active, .menu3:visited:hover { padding-left: 0px; padding-Right: 0px; }" +
+        "	.categoryGroupButton, .categoryGroupButton:link, .categoryGroupButton:visited, .categoryGroupButton:hover, .categoryGroupButton:active, .categoryGroupButton:visited:hover { color: #FFFFFF; border-style: none; background-image: none; background-color: ; height: auto; padding: 4px; font-size: 11pt; }" +
+        "	.categoryButton, .categoryButton:link, .categoryButton:visited, .categoryButton:hover, .categoryButton:active, .categoryButton:visited:hover { border-style: none; background-image: none; height: auto; padding-top: 4px; padding-bottom: 4px; margin-top: 5px; margin-bottom: 5px; }" +
+        "	.categoryButton, .categoryButton:link, .categoryButton:visited { background-color: #CBCBCB; }" +
+        "	.categoryButton:active, .categoryButton:hover, .categoryButton:visited:hover { background-color: ; }" +
+        "	.prodDetailsButton, .prodDetailsButton:link, .prodDetailsButton:visited, .prodDetailsButton:hover, .prodDetailsButton:active, .prodDetailsButton:visited:hover { border-style: none; background-image: none; }" +
+        "	.prodDetailsButton, .prodDetailsButton:link, .prodDetailsButton:visited { background-color: #CBCBCB; }" +
+        "	.prodDetailsButton:active, .prodDetailsButton:hover, .prodDetailsButton:visited:hover { background-color: ; }" +
+        "	.prodDetailsButton, .prodDetailsButton:link, .prodDetailsButton:visited, .prodDetailsButton:hover, .prodDetailsButton:active, .prodDetailsButton:visited:hover { margin-top: -1px; }" +
+        "	#topNavBar a, #topNavBar a:link, #topNavBar a:visited { color: ; }" +
+        "	#topNavBar a:hover, #topNavBar a:active, #topNavBar a:visited:hover { color: #999999; }" +
+        "	.breadcrumbText, .breadcrumbText:link, .breadcrumbText:visited { color: ; }" +
+        "	.breadcrumbText:hover, .breadcrumbText:active, .breadcrumbText:visited:hover { color: #999999; }" +
+        "	.breadcrumbText, .breadcrumbText:link, .breadcrumbText:visited, .breadcrumbText:hover, .breadcrumbText:active, .breadcrumbText:visited:hover { font-size: 24px; }" +
+        "	.prodOrderButton, .prodOrderButton:link, .prodOrderButton:visited, .prodOrderButton:hover, .prodOrderButton:active, .prodOrderButton:visited:hover { border-style: none; background-image: none; }" +
+        "	.prodOrderButton, .prodOrderButton:link, .prodOrderButton:visited { background-color: #CBCBCB; }" +
+        "	.prodOrderButton:active, .prodOrderButton:hover, .prodOrderButton:visited:hover { background-color: ; }" +
+        "	.prodOrderButton, .prodOrderButton:link, .prodOrderButton:visited, .prodOrderButton:hover, .prodOrderButton:active, .prodOrderButton:visited:hover { margin-top: 3px; }" +
+        "	#orderNameTop .standardButton1, #orderNameTop .standardButton1:link, #orderNameTop .standardButton1:visited, #orderNameTop .standardButton1:hover, #orderNameTop .standardButton1:active, #orderNameTop .standardButton1:visited:hover { border-style: outset; padding: 1px; }" +
+        "	.legend { color: #000000; }" +
+        "</style>";
+        $("table[width=800][height=259]>tbody>tr>td[height=19]").css("background-color", "");
+        $("table[width=800][height=259] td[height=142] table[height=134] td[align=right] img").attr("src", "");
+    } else if (strTemplateName == "flavours") {
+      document.body.innerHTML +=
+        "<style type='text/css'>" +
+        "	body { background: url(../images/FlavourBackground7609.jpg) #000000 no-repeat center 50%; }" + 
+        "	.categoryButton, .categoryButton:link, .categoryButton:visited, .categoryButton:hover, .categoryButton:active, .categoryButton:visited:hover { border-style: none; background-image: none; background-color: transparent; text-align: left; height: auto; padding: 4px; font-size: 12px; }" + 
+        "	.categoryGroupButton, .categoryGroupButton:link, .categoryGroupButton:visited, .categoryGroupButton:hover, .categoryGroupButton:active, .categoryGroupButton:visited:hover { border-style: none; background-image: none; background-color: #7f9d43; height: auto; padding: 4px; font-size: 11pt; }" + 
+        "	.topnav, .topnav:link, .topnav:visited { color: #2A913E; }" + 
+        "	.topnav:hover, .topnav:active, .topnav:visited:hover { color: #000000; }" + 
+        "	.topnav, .topnav:link, .topnav:visited, .topnav:hover, .topnav:active, .topnav:visited:hover { font-family: Verdana; line-height: 20pt; font-size: 11pt; font-weight: bold; }" + 
+        "	#topNavBar { display: none; }" +
+        "	.nav, .nav:link, .nav:visited, .nav:hover, .nav:active, .nav:visited:hover { color: #FFFFFF; font-size: 10px; }" + 
+        "	#sideCalendar .menu, #sideCalendar .menu:link, #sideCalendar .menu:visited, #sideCalendar .menu:hover, #sideCalendar .menu:active, #sideCalendar .menu:visited:hover { background-image: none; border-style: none; }" + 
+        "	.rightRound a, .rightRound a:link, .rightRound a:visited, .rightRound a:hover, .rightRound a:active, .rightRound a:visited:hover { font-size: 9px; }" + 
+        "	.rightRoundActive, .rightRoundActive:link, .rightRoundActive:visited, .rightRoundActive:hover, .rightRoundActive:active, .rightRoundActive:visited:hover { font-size: 9px; }" + 
+        "	.standardButton2, .standardButton2:link, .standardButton2:visited, .standardButton2:hover, .standardButton2:active, .standardButton2:visited:hover { border-style: none; background-color: #7f9d43; font-size: 11pt; }" + 
+        "	.formTable tr { background-color: transparent; }" +
+        "	#divPlaceOrderBody { margin-top: 10px; }" +
+        "	.reviewInvoiceTable { background-color: transparent !important; }" +
+        "</style>";
+        
+    }
+    
+    
+  }
+</script>
+<link rel="stylesheet" type="text/css" href="/css/DesktopStyles.css"><style>#secMainContent .CatContentList .CatContentListColumn {flex-basis: auto;}.fa-linkedin:before {    content: "\f431";}#moreLink {text-transform: uppercase !important;}.addtoorder {text-transform: uppercase !important;}#clearFeedbackFormButton {text-transform: uppercase;}#submitFeedbackFormButton {text-transform: uppercase;}</style><div class="contentTemplateIMG hideonmobile" style="background-image: url('https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Charcoal_HeroBanner6.jpg'); height: 200px;">
+</div><a name="DiningCard" href="?intOrderID=&amp;intCustomerID="></a><div style="margin: auto; display: flex; max-width: 1366px; flex-direction: column; align-items: center;">
+<h1 style="font-weight: bold;">CAFÉS</h1>
+</div>
+<div class="contentTemplate">
+<div class="contentWrapper basicWrapper DiningSliderWrapper">
+<div class="multipleshadowboxcards"><div class="bx-wrapper" style="max-width: 1800px;"><div class="bx-viewport" aria-live="polite" style="width: 100%; overflow: hidden; position: relative; height: 571px;"><ul class="diningSlider" style="width: 4215%; position: relative; transition-duration: 1s; transform: translate3d(-1206px, 0px, 0px);"><li class="slide" style="float: left; list-style: none; position: relative; width: 603px; height: 571px;" aria-hidden="true"><div class="cardContent">
+<div class="cardHeroImage" style="min-height: 150px; background-image: url(&quot;https://crm.catertrax.com/publisher_images/sodexo/sdxooe/charcoal_twodiningpanel8.jpg&quot;);"></div>
+<br>
+<div class="cardTitle" style="justify-content: center;">
+<h2 style="font-weight: bold;">Café Bellon</h2>
+</div>
+<div class="cardText">
+<p>Café Hours: 7:00 am - 3:00 pm</p>
+<p>Breakfast: 7:00 am - 8:30 am</p>
+<p>Lunch: 11:30 am - 2:00 pm</p>
+<a class="HomePageButton" href="https://misofitraining2.catertrax.com/shopportal.asp?pageref=DisplaySMGMenu2&amp;intOrderID=&amp;intCustomerID=">INTERACTIVE MENU</a>
+<div style="margin-bottom: 2em;"></div>
+<div class="dropzoneContainer"><h3 class="dropzoneFileGroupHeader" style="color:#000000">Printable Menu</h3><div class="dropzoneBtnContainer">
+  <div id="284" class="dropzoneIndividualUploadContainer">
+    <a class="HomePageButton" href="https://misofitraining2.catertrax.com/upload/Web%20Based%20CaterTrax%20Catering%20Brochure.pdf?intOrderID=&amp;intCustomerID=" target="_blank" id="Up_284">Web Based CaterTrax Catering Brochure</a>
+    
+  </div>
+  </div></div></div>
+</div>
+</li><li class="slide" style="float: left; list-style: none; position: relative; width: 603px; height: 571px;" aria-hidden="true"><div class="cardContent">
+<div class="cardHeroImage" style="min-height: 150px; background-image: url(&quot;https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Charcoal_TwoDiningPanel20.jpg&quot;);"></div>
+<br>
+<div class="cardTitle" style="justify-content: center;">
+<h2 style="font-weight: bold;">Café Michel</h2>
+</div>
+<div class="cardText">
+<p>Café Hours: 7:00 am - 3:00 pm</p>
+<p>Breakfast: 7:00 am - 8:30 am</p>
+<p>Lunch: 11:30 am - 2:00 pm</p>
+<center>
+<div style="max-width: 200px;"><a class="HomePageButton" href="https://misofitraining2.catertrax.com/shopportal.asp?pageref=DisplaySMGMenu3&amp;intOrderID=&amp;intCustomerID=">INTERACTIVE MENU</a></div>
+</center>
+<div style="margin-bottom: 2em;"></div>
+
+<div class="dropzoneContainer"><div class="dropzoneBtnContainer"></div></div>
+
+</div>
+</div>
+
+</li><li class="slide" style="float: left; list-style: none; position: relative; width: 603px; height: 571px;" aria-hidden="false"><div class="cardContent">
+<div class="cardHeroImage" style="min-height: 150px; background-image: url(&quot;https://crm.catertrax.com/publisher_images/sodexo/sdxooe/charcoal_twodiningpanel4.jpg&quot;);"></div>
+<br>
+<div class="cardTitle" style="justify-content: center;">
+<h2 style="font-weight: bold;">Aspretto Coffee</h2>
+</div>
+<div class="cardText">
+<p>Hours: 7:00 am - 4:00 pm</p>
+<p>Espresso – Coffee – Tea
+</p><p>Sandwiches – Salads</p>
+<p>Desserts - Snacks</p>
+<div class="dropzoneContainer"><div class="dropzoneBtnContainer"></div></div>
+
+<p>&nbsp;</p>
+</div>
+</div>
+</li><li class="slide" style="float: left; list-style: none; position: relative; width: 603px; height: 571px;" aria-hidden="false"><div class="cardContent">
+<div class="cardHeroImage" style="min-height: 150px; background-image: url(&quot;/images/miSofi_skin_2019_web_images39.jpg&quot;);"></div>
+<br>
+<div class="cardTitle" style="justify-content: center;">
+<h2 style="font-weight: bold;">Vending</h2>
+</div>
+<div class="cardText">
+<p>Open all day - Everyday</p>
+<p>Located near the elevators on each floor</p>
+Offerings include: Fresh Brewed Coffee, Cold Beverages, Snacks including Mindful selections
+<p>&nbsp;</p>
+<div class="dropzoneContainer"><div class="dropzoneBtnContainer"></div></div>
+
+<p>&nbsp;</p>
+</div>
+</div>
+</li></ul></div><div class="bx-controls bx-has-controls-direction bx-has-pager"><div class="bx-controls-direction"><a class="bx-prev" href="">Prev</a><a class="bx-next" href="">Next</a></div><div class="bx-pager bx-default-pager"><div class="bx-pager-item"><a href="" data-slide-index="0" class="bx-pager-link">1</a></div><div class="bx-pager-item"><a href="" data-slide-index="1" class="bx-pager-link">2</a></div><div class="bx-pager-item"><a href="" data-slide-index="2" class="bx-pager-link active">3</a></div></div></div></div>
+  <script>window.jQuery || document.write('<script type="text/javascript" language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">\x3C/script>')</script>
+  <script src="/corp_templates/common-assets/js/jquery.bxslider.js"></script>
+
+  <script type="text/javascript">
+    var bxSlider;
+    
+    var oneUpCards = false;
+
+    var autoloop = true;
+    
+    var isAuto = true;
+
+    
+        autoloop = false;
+      
+
+    if (0 > 0) {
+      isAuto = false;
+    }
+
+    function GetDiningSliderSettings() {
+      
+      //Slider settings for 2 slider cards at a time
+      var diningSliderSettings1 = {
+        slideSelector: ".slide",
+        mode: 'horizontal',
+        autoDelay: 5000,
+        speed: 1000,
+        pager: true,
+        auto: isAuto,
+        autoDirection: 'next',
+        slideMargin: 0,
+        autoHover: true,
+        infiniteLoop: autoloop,
+        touchEnabled: false,
+        slideWidth: 900,
+        minSlides: 2,
+        maxSlides: 2,
+        moveSlides: 1
+      };
+
+      //Slider settings for one slider card at a time
+      var diningSliderSettings2 = {
+        slideSelector: ".slide",
+        mode: 'horizontal',
+        autoDelay: 5000,
+        speed: 1000,
+        pager: true,
+        auto: isAuto,
+        autoDirection: 'next',
+        slideMargin: 0,
+        autoHover: true,
+        infiniteLoop: true,
+        touchEnabled: false
+      };
+
+
+      return (($(window).width() > 1024) && !oneUpCards )? diningSliderSettings1 : diningSliderSettings2;
+    }
+
+    $(document).ready(function($) {
+      var diningSlideCount = 4;
+
+      if (diningSlideCount > 1) {
+        bxSlider = $('.diningSlider').bxSlider(GetDiningSliderSettings());
+        
+        $('.multipleshadowboxcards .diningSlider .slide').css('height', $('.multipleshadowboxcards .bx-wrapper').height()+'px');
+      }
+    });
+
+    $(window).resize(function() {
+      $('.multipleshadowboxcards .diningSlider .slide').css('height', '');
+      
+      bxSlider.reloadSlider($.extend(GetDiningSliderSettings(),{startSlide:bxSlider.getCurrentSlide()}));
+      
+      $('.multipleshadowboxcards .diningSlider .slide').css('height', $('.multipleshadowboxcards .bx-wrapper').height()+'px');
+    });
+  </script>
+  </div>
+</div>
+</div>
+<div class="contentTemplate thirds">
+<div class="two-third hideonmobile"><div class="responsive-image" style="background-image: url('https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Charcoal_PersonalOrdering.jpg');"></div>
+
+</div>
+<div class="one-third"><div style="background-color:#547c0a;color:white;padding:40px 60px 40px 60px;">
+<h1 style="color: #fff;text-align: center;font-weight: bold;font-size: calc(26px + (31 - 22) * ((100vw - 375px) / (1600 - 375)));">PERSONAL ORDERING</h1>
+<div style="margin-bottom: 10px;"></div>
+<h2 style="color: #fff;font-size: calc(31px + (35 - 22) * ((100vw - 375px) / (1600 - 375)));text-align: center; line-height:105%">ORDER A MEAL<br>
+TO EAT TODAY!</h2>
+<div style="margin-bottom: 40px;"></div>
+<div class="d-flex justify-content-center">
+<div class="form-inline"><a class="HomePageButton" style="max-width: 215px; background: #ffffff; color:  #000000;" href="https://misofitraining2.catertrax.com/menuGrid.asp?mode=p&amp;a=2&amp;cg=10&amp;intOrderID=&amp;intCustomerID=">START YOUR ORDER</a></div>
+</div>
+</div>
+
+</div>
+</div>
+
+
+<div style="margin: auto; display: flex; max-width: 1366px; flex-direction: column; align-items: center; bottom-margin: 0em;">
+<h1 style="font-weight: bold;">CATERING</h1>
+</div>
+<div class="contentTemplate">
+<div class="contentWrapper basicWrapper">
+<div class="threecolumnshadowboxcards" style="margin-top: 0px;">
+<div class="cardContent">
+<div class="cardTitle">
+<img alt="" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Flavours.png">
+</div>
+<div class="cardText">Flavours spans the simple coffee break to the more elaborate dinner reception offering a variety of chef-inspired foods and flavours.</div>
+<div class="cardButtons">
+<a class="HomePageButton customButtonColor1" href="https://misofitraining2.catertrax.com/menugrid.asp?mode=c&amp;a=1&amp;cg=9&amp;intOrderID=&amp;intCustomerID=">ORDER NOW</a>
+</div>
+</div>
+<div class="cardContent">
+<div class="cardTitle">
+<img alt="" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Simply_to_Go_logo.png">
+</div>
+<div class="cardText">Catering boxed fresh for you! For casual gatherings of any size, offering simple, high quality meals handcrafted onsite daily.</div>
+<div class="cardButtons">
+<a class="HomePageButton customButtonColor2" href="https://misofitraining2.catertrax.com/menugrid.asp?mode=c&amp;a=1&amp;cg=8&amp;intOrderID=&amp;intCustomerID=">ORDER NOW</a>
+</div>
+</div>
+<div class="cardContent">
+<div class="cardTitle">
+<img alt="" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/elements_logo.png">
+</div>
+<div class="cardText">Everyday catering at affordable prices. Elements is perfect for themed buffets, party packages and snacks for break times.</div>
+<div class="cardButtons">
+<a class="HomePageButton customButtonColor3" href="https://misofitraining2.catertrax.com/menugrid.asp?mode=c&amp;a=1&amp;cg=7&amp;intOrderID=&amp;intCustomerID=">ORDER NOW</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="contentTemplate">
+<div class="contentWrapper basicWrapper">
+<div class="singleshadowboxcard">
+<div class="imageHalf" style="background-image: url(&quot;https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Flavours_allpurpose2.jpg&quot;);"> </div>
+<div class="contentHalf">
+<div class="cardContent">
+<div class="cardTitle">
+<br>
+<h2>ROOM RESERVATIONS</h2>
+</div>
+<div class="cardText">
+<h4>Reserve a room for your Catering Event now.</h4>
+</div>
+<div class="cardButtons"><a class="HomePageButton" href="https://misofitraining2.catertrax.com/shop_res2.asp?intOrderID=&amp;intCustomerID=">ROOM RESERVATIONS</a>
+<div style="margin-bottom: 2em;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div class="contentTemplate" style="background-color: #ffffff;">
+<div style="margin: auto; display: flex; max-width: 1366px; flex-direction: column; align-items: center;"><br>
+<h1 style="font-weight: bold;">MEET OUR TEAM</h1>
+</div>
+</div>
+
+<div class="contentTemplate" style="background-color: #ffffff; ">
+<div class="contentWrapper basicWrapper" style="padding-top: 37px; padding-left: 40px; padding-right: 40px;">
+<div class="col1in3">
+<center><img src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Person3unsplash.png" alt="" style="max-width: 278px; width: 100%;"></center>
+<p> </p>
+<center>
+<h1>SAMANTHA<br>
+SMITH</h1>
+</center>
+<center><span style="font-weight: bold; color: #5a5a5a; ">Executive Chef</span>
+<br>
+<br>
+<span style="color: #5a5a5a;"><a href="tel:123-123-1234?intOrderID=&amp;intCustomerID=" style=" color:#5a5a5a">123-123-1234</a></span><br>
+<span>
+<span>
+<a href="mailto:name@sodexo.com" style=" color:#5a5a5a">name@sodexo.com</a></span>
+<div style="margin-bottom: 5em;"></div>
+</span></center>
+</div>
+<div class="col1in3">
+<center><img src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Person1unsplash.png" alt="" style="max-width: 278px; width: 100%;"></center>
+<p> </p>
+<p> </p>
+<center>
+<h1>JASON<br>
+McCORMICK</h1>
+</center>
+<center><span style="font-weight: bold; color: #5a5a5a; ">Director Catering and Events</span>
+<br>
+<br>
+<span style="color: #5a5a5a;"><a href="tel:123-123-1234?intOrderID=&amp;intCustomerID=" style=" color:#5a5a5a">123-123-1234</a></span><br>
+<span>
+<span>
+<a href="mailto:name@sodexo.com" style=" color:#5a5a5a">name@sodexo.com</a></span>
+<div style="margin-bottom: 5em;"></div>
+</span></center>
+</div>
+<div class="col1in3">
+<center><img src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/Person2unsplash.png" alt="" style="max-width: 278px; width: 100%;"></center>
+<p> </p>
+<p> </p>
+<center>
+<h1>JENNIFER<br>
+WALKER</h1>
+</center>
+<center><span style="font-weight: bold; color: #5a5a5a; ">Area Executive Chef</span>
+<br>
+<br>
+<span style="color: #5a5a5a;"><a href="tel:123-123-1234?intOrderID=&amp;intCustomerID=" style=" color:#5a5a5a">123-123-1234</a></span><br>
+<span>
+<span>
+<a href="mailto:name@sodexo.com" style=" color:#5a5a5a">name@sodexo.com</a></span>
+<div style="margin-bottom: 5em;"></div>
+</span></center>
+</div>
+</div>
+</div>
+<a name="Explore" href="?intOrderID=&amp;intCustomerID="></a>
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tbody><tr><td><div style="margin:auto;max-width:1366px;display:flex;flex-direction:column;align-items:center;">
+<h1 style="font-weight: bold;"><br>
+EXPLORE</h1>
+<h3>Learn about programs &amp; offers!</h3>
+</div>
+<div class="contentTemplate">
+<div class="contentWrapper basicWrapper">
+<div class="threecolumnshadowboxcards">
+<div class="cardContent">
+<div class="cardHeroImage"><img src="https://crm.catertrax.com/publisher_images/Sodexo/LOF_CucumberPeachSalsaChickenWrap.jpg" alt=""></div>
+<div class="cardTitle">
+</div>
+<div class="cardTextLeft">
+Great tastes await! Savor the latest creations from our Love of Food chefs.</div>
+<div class="cardButtons"><a class="HomePageButton" href="https://loveoffood.sodexo.com/?intOrderID=&amp;intCustomerID=" target="_blank">LEARN MORE</a>
+</div>
+</div>
+
+<div class="cardContent">
+<div class="cardHeroImage"><img src="https://crm.catertrax.com/publisher_images/Sodexo/STG_March_OOE_450x275.jpg" alt=""></div>
+<div class="cardTitle">
+<h1 style="font-weight: 600;font-size: 26px; width: 100%;"></h1>
+</div>
+<div class="cardTextLeft">Need a pick me up? Check out the Simply to Go cooler. There are choices for every time of day.</div>
+</div>
+
+<div class="cardContent">
+<div class="cardHeroImage"><img src="https://crm.catertrax.com/publisher_images/Sodexo/LOF_PulledPorkTostonesThreeBeanSalad_OOE_450x275.jpg" alt=""></div>
+<div class="cardTitle">
+</div>
+<div class="cardTextLeft">
+A sandwich for every season. Try it in your local restaurant!</div>
+<div class="cardButtons"><a class="HomePageButton" href="https://loveoffood.sodexo.com/?intOrderID=&amp;intCustomerID=" target="_blank">LEARN MORE</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</td></tr></tbody></table>
+
+  <div id="errorMsg" style="display: none;">
+    <!--<div class="header"><h3 id="headerTitle">Error</h3></div>-->
+
+    <div class="message"></div>
+    <div class="simplemodalbuttons">
+      <a class="simplemodal-close" href="?intOrderID=&amp;intCustomerID=">Close</a>
+    </div>
+  </div>
+
+  <!-- modal content -->
+  <div id="confirm" style="display:none;">
+    <div class="header"><span id="headerTitle">Confirm</span></div>
+    <div class="message"></div>
+    <div class="simplemodalbuttons">
+      <div class="no simplemodal-close">No</div>
+      <div class="yes simplemodal-close">Yes</div>
+    </div>
+  </div>
+  <!-- preload the images -->
+  <div style="display:none">
+    <img src="Catertrax_Images/simplemodal/header.gif" alt="">
+    <img src="Catertrax_Images/simplemodal/button.gif" alt="">
+  </div>
+
+  <script type="text/javascript">
+    var currentSimpleModalAlertCloseHandler = null;
+    
+    function SimpleModalAlert(message, closeFunc) {
+      $('#errorMsg .message').html(message + "<br /><br />");
+      $('#errorMsg').modal({ zIndex:1000000,
+        onShow: function (dlg) {
+          $(dlg.container).css('height', 'auto');
+          $(dlg.wrap).css('overflow', 'auto');
+
+          var closeBtn = $('#errorMsg .simplemodal-close');
+          
+          // Remove previous handler, if there was one.
+          if(currentSimpleModalAlertCloseHandler) {
+            closeBtn.unbind('click', currentSimpleModalAlertCloseHandler);
+            currentSimpleModalAlertCloseHandler = null;
+          }
+          if(closeFunc) {
+            closeBtn.click(function() { closeFunc(); });
+            currentSimpleModalAlertCloseHandler = closeFunc;
+          }
+        }
+      });
+    }
+
+    /* Keep in mind that this function will return immediately,
+     * and the function corresponding to the user's selection will
+     * run once the user makes a selection. (There's no way to
+     * actually wait for something in JavaScript.) */
+    function SimpleModalConfirm(message, yesFunc, noFunc, closeFunc) {
+      $('#confirm').modal({
+        closeHTML: "<a href='#' title='Close' class='modal-close'>x</a>",
+        position: ["20%",],
+        overlayId: 'confirm-overlay',
+        containerId: 'confirm-container',
+        onShow: function (dialog) {
+          $('.message', dialog.data[0]).append(message);
+          $('.yes', dialog.data[0]).click(yesFunc);
+          $('.no', dialog.data[0]).click(noFunc);
+          $('.modal-close').click(closeFunc);
+        }
+      });
+    }
+  </script>
+
+<!-- End Dynamic Content -->
+</div></div></div>
+</div>
+</div>
+
+
+
+<div id="secMainContentFooter">
+<div id="custFooter">
+  <div id="innerCustFooter">
+    <div id="custFooterLeft">
+      <div id="footerLinks">	
+        <div id="FooterPortalLinks"><ul><li><a href="https://misofitraining2.catertrax.com/index.asp?x=x&amp;intOrderID=&amp;intCustomerID=" target="">Home</a></li><li><a href="https://misofitraining2.catertrax.com/shopcustadmin.asp?x=x&amp;intOrderID=&amp;intCustomerID=" target="">My&nbsp;Account</a></li><li><a href="https://misofitraining2.catertrax.com/shopportal.asp?pageref=ContactUs&amp;intOrderID=&amp;intCustomerID=" target="">Contact&nbsp;Us</a></li><li><a href="shopportal.asp?pageref=ContactUs#feedback" target="">Feedback</a></li></ul></div>
+      </div>
+      <div id="footerMessage"><div class="col1in2" ;"=""><a href="https://misofitraining2.catertrax.com/shopcustadmin.asp?x=x%20target=&amp;intOrderID=&amp;intCustomerID=" _blank"="" "="">Update Wallet</a><br><br></div>
+<div class="col1in2" ;"=""><a href="https://crm.catertrax.com/publisher_uploads/Sodexo/CATERTRAX_WEBSITE_PRIVACY_STATEMENT_US.pdf?intOrderID=&amp;intCustomerID=" target="_blank">Privacy Policy</a><br><br></div>
+<div class="col1in2" ;"=""><a href="https://misofitraining2.catertrax.com/shopmailpwd.asp?custstat=new&amp;intOrderID=&amp;intCustomerID=">Reset Password</a><br><br></div>
+<div class="col1in2" ;"=""><a target="_blank" href="https://crm.catertrax.com/publisher_uploads/Sodexo/TERMS_AND_CONDITIONS.pdf?intOrderID=&amp;intCustomerID=">Terms and Conditions</a><br><br></div>
+<div class="col1in2" ;"=""><a href="https://misofitraining2.catertrax.com/shoppolicies.asp?x=x&amp;intOrderID=&amp;intCustomerID=">Catering Policies</a><br><br></div></div>
+    </div>
+    <div id="custFooterRight">
+      <div id="footerSecLogo">
+        <img id="footerLogo" src="https://crm.catertrax.com/publisher_images/Sodexo/SDXOOE/sodexo_logo_white.png">
+      </div>
+      <div id="footerSM">
+        <div id="FooterSocialMediaLinks"><ul><li><a href="https://www.facebook.com/sodexomain?intOrderID=&amp;intCustomerID=" target="_blank" class="fab fa-facebook-square fa-2x"></a></li><li><a href="http://pinterest.com/sodexousa?intOrderID=&amp;intCustomerID=" target="_blank" class="fab fa-pinterest-square fa-2x"></a></li><li><a href="https://twitter.com/sodexoUSA?intOrderID=&amp;intCustomerID=" target="_blank" class="fab fa-twitter-square fa-2x"></a></li><li><a href="https://youtube.com/user/SodexoChannel?intOrderID=&amp;intCustomerID=" target="_blank" class="fab fa-linkedin fa-2x"></a></li></ul></div>
+      </div>
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+    document.getElementById('footerLogo').src = footerImg;
+  </script>
+</div>
+<div id="ctxFooter">
+  <div id="innerCTXFooter">
+    <div id="ctxFooterLeft">
+      <div id="copyright">
+        <div id="trustLinkContainer">
+          <a id="trustLink " href="https://trust.catertrax.com/?intOrderID=&amp;intCustomerID=" target="_blank"><i class="fas fa-circle color-dot none"></i><span class="color-description">All Systems Operational</span></a>
+        </div>
+        <div>
+          © Copyright 2022 <a href="https://catertrax.com/?intOrderID=&amp;intCustomerID=" target="_blank">CaterTrax Inc.</a> <a href="https://catertrax.com/intellectual-property/?intOrderID=&amp;intCustomerID=" target="_blank">All rights reserved.</a>
+        </div>
+        <div>
+          The content of this website may not be copied in part or full without express written permission from CaterTrax Inc. All violations will be prosecuted to the fullest extent of the law.
+        </div>
+      </div>
+    </div>
+    <div id="ctxFooterRight">
+      <a id="adminLink" href="https://misofitraining2.catertrax.com/shopcatertrax.asp?intOrderID=&amp;intCustomerID="><i class="fas fa-sign-in-alt"></i>Admin Sign In</a>
+    </div>
+  </div>
+</div>
+</div></div>
+
+<!-- End Page Layout
+================================================== -->
+<script type="text/javascript" src="/corp_templates/FOHE/Standard/js/popper.min.js"></script>
+<script type="text/javascript" src="/corp_templates/FOHE/Standard/js/clipboard.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/scripts/se-v2.js"></script>
+<script>
+  var sp = new StatusPage.page({ page : 'bqgrjmjmj71t' });
+  sp.status({
+    success : function(data) {
+    // adds the text description to the dropdown
+    jQuery('.color-description').text(data.status.description);
+    // appends the status indicator as a class name so we can use the right color for the status light thing
+    jQuery('.color-dot').addClass(data.status.indicator);
+    }
+  });
+</script>
+<script>var config ={'statementLink':'','feedbackLink':'https://catertrax.com/accessibility-feedback','footerHtml':'CaterTrax Assist, powered by accessiBe','hideMobile':false,'hideTrigger':false,'language':'en','position':'right','leadColor':'#494949','triggerColor':'#494949','triggerRadius':'4px','triggerPositionX':'right','triggerPositionY':'bottom','triggerIcon':'people','triggerSize':'medium','triggerOffsetX':20,'triggerOffsetY':20,'mobile':{'triggerSize':'small','triggerPositionX':'right','triggerPositionY':'bottom','triggerOffsetX':5,'triggerOffsetY':5,'triggerRadius':4 }};(function(document, tag) { var script = document.createElement(tag); var element = document.getElementsByTagName('body')[0]; script.src = 'https://acsbap.com/apps/app/assets/js/acsb.js'; script.async = true; script.defer = true; (typeof element === 'undefined' ? document.getElementsByTagName('html')[0] : element).appendChild(script); script.onload = function() { acsbJS.init(config); };}(document, 'script'));</script><script src="https://acsbap.com/apps/app/assets/js/acsb.js" async="" defer=""></script>
+
+
+<link rel="stylesheet" type="text/css" href="/css/SimpleModalConfirm.css">
+<script type="text/javascript" src="/scripts/jquery.simplemodal.js"></script>
+
+  <script type="text/javascript">
+  if (0 > 0){
+    rg4js('apiKey', 'MicVFz96wKF08qpiIVbr6w');
+    rg4js('enablePulse', true);
+    rg4js('setUser', {
+      identifier: '5693-A-',
+      isAnonymous: false,
+      fullname: '5693-A-'
+    });
+  }else if (0 > 0){
+
+        rg4js('apiKey', 'MicVFz96wKF08qpiIVbr6w');
+        rg4js('enablePulse', true);
+        rg4js('setUser', {
+          identifier: '5693-C-',
+          isAnonymous: false,
+          fullname: '5693-C-'
+          });
+  } else{
+    rg4js('apiKey', 'MicVFz96wKF08qpiIVbr6w');
+    rg4js('enablePulse', true);
+    rg4js('setUser', {
+      identifier: '5693-Anonymous',
+      isAnonymous: true,
+      fullname: '5693-Anonymous'
+    });
+  }
+  </script>
+
+
+<script type="text/javascript">
+  var anchors = document.getElementsByTagName("a"); 
+  var anchorText = "";
+  var bRemoveOrderID = false;
+
+  appendQueryString();
+
+  function appendQueryString()
+  {
+
+    var queryString;
+
+    for(var i =0; i<anchors.length; i++) {
+
+      if ((anchors[i].href.indexOf("mailto:") == -1) && (anchors[i].href.indexOf("#") == -1) && (anchors[i].className.indexOf("nosession") == -1 && anchors[i].id != 'aLogOffAdmin' && anchors[i].id != 'aLogOff') && (anchors[i].href.indexOf("catertrax.com") != -1 || anchors[i].href == "" || anchors[i].href.indexOf("misofi.net") || anchors[i].href.indexOf("dinnerbydish.com") || anchors[i].href.indexOf("heavenlycatering.com") || anchors[i].href.indexOf("dine.castwdw.com") || anchors[i].href.indexOf("houstoneatscatering.com") || anchors[i].href.indexOf("expresscatering.usc.edu") || anchors[i].href.indexOf("dine.castdlr.com") || anchors[i].href.indexOf("catering.castwdw.com") || anchors[i].href.indexOf("home.castdr.com") || anchors[i].href.indexOf("mpsfoodservice.org") || anchors[i].href.indexOf("southeasterncatering.com") || anchors[i].href.indexOf("draperlabs.sebastians.com"))) {
+        // innerHTML gets reset after changing href (part 1)
+        anchorText = anchors[i].innerHTML;
+        queryString = "";
+        if (anchors[i].href.indexOf("intOrderID=") == -1 && anchors[i].href.indexOf("javascript") == -1)
+          queryString = "intOrderID=";
+        if (anchors[i].href.indexOf("intCustomerID=") == -1 && anchors[i].href.indexOf("javascript") == -1)
+          queryString += (queryString.length > 0) ? "&intCustomerID=" : "intCustomerID=";
+        if (queryString.length > 0) {
+          if (anchors[i].href.indexOf("?") == -1) { anchors[i].href = anchors[i].href + "?" + queryString; } else { anchors[i].href = anchors[i].href + "&" + queryString; }
+          anchors[i].innerHTML = anchorText;  // Part 2 of fix for IE 7 & 8 (possibly 6 as well), innerHTML gets reset after changing href
+        }
+      } else if(bRemoveOrderID) {
+        var rExp = /intOrderID=&/gi;
+        anchors[i].href = anchors[i].href.replace(rExp,"");
+      }
+    }
+
+    for(var i =0; i<document.forms.length; i++) {
+      if (!document.forms[i].action.tagName || document.forms[i].action.tagName == "undefined") {
+        queryString = "";
+        if(document.forms[i].action.indexOf("intOrderID=") == -1)
+          queryString = "intOrderID=";
+        if (document.forms[i].action.indexOf("intCustomerID=") == -1)
+          queryString += (queryString.length > 0) ? "&intCustomerID=" : "intCustomerID=";
+        if (queryString.length > 0)
+          if (document.forms[i].action.indexOf("?") == -1) { document.forms[i].action = document.forms[i].action + "?" + queryString; } else { document.forms[i].action = document.forms[i].action + "&" + queryString; }						
+      } else if(bRemoveOrderID) {
+        var rExp = /intOrderID=/gi;
+        document.forms[i].action.value = document.forms[i].action.value.replace(rExp,"");
+      }
+    }
+  }
+  
+  
+</script>
+</body><loom-container id="lo-engage-ext-container"><loom-shadow classname="resolved"></loom-shadow></loom-container><loom-container id="lo-companion-container"><loom-shadow classname="resolved"></loom-shadow></loom-container><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>

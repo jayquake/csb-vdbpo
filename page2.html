@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Page 2</title>
+
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+            integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+            crossorigin="anonymous"
+    />
+    <link
+            rel="stylesheet"
+            href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+            integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+            crossorigin="anonymous"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+            integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+            crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"
+    ></script>
+
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-info">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand" href="#">Ace Iframe Example</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <button class="btn btn-outline-dark ml-auto" type="submit">Cart</button>
+        </div>
+    </div>
+</nav>
+
+<div class="card text-center">
+    <div class="card-header lead " >
+        This is a basic aCe iframe example
+    </div>
+    <img class="card-img-top rounded p-2 mx-auto w-25 "   src="https://uploads.codesandbox.io/uploads/user/c9cec18f-1964-431b-8ae3-a9c45b39da78/nv4r-Group+3160.png"
+      alt="iframe inserted in a website illustration">
+    <div class="row mb-3">
+        <div class="lead text-center card-subtitle m-auto text-muted">
+            Add your details to the form below to see how your site scores.
+          </div>
+    </div>
+          <div class="iframe-holder lead card-body">
+            <div class="row ">
+              <div class="col-md-6 ">
+                <form id="form">
+                  <div class="mb-3">
+                    <label for="full-name" class="form-label">Full name</label>
+                    <input type="text" class="form-control" name="fullName" id="full-name" required="" aria-label="fullname">
+                  </div>
+                  <div class="mb-3">
+                    <label for="email-address" class="form-label">Email address</label>
+                    <input
+                      name="email"
+                      type="email"
+                      class="form-control"
+                      id="email-address"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="url" class="form-label">Url</label>
+        
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="url"
+                      id="url"
+                      placeholder="https://www.example.com"
+                      required
+                    />
+                  </div>
+        
+                  <!-- Button trigger modal -->
+                  <button
+                    type="submit"
+                    type="button"
+                    id="popup-submit"
+                    class="btn btn-primary mt-4 mb-4"
+                  >
+                    Get Results
+                  </button>
+                </form>
+              </div>
+              <div class="col-md-6">
+                
+              </div>
+            </div>
+      
+     
+      
+  
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header text-center">
+              <h5 class="modal-title lead" id="exampleModalLabel">
+                Your Audit Results:
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div id="iframe-container"></div>
+          </div>
+        </div>
+      </div>
+  </div>
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"
+      ></script>
+      <script src="./script.js"></script>
+  
+
+<div style="position:fixed; z-index: 3; float:right; width: 5em; top: 55%; right: 1%; "><img
+        style="height: 5em; width: 5em;" src="https://cdn-icons-png.flaticon.com/512/1512/1512642.png"
+        data-acsb-custom-trigger="true"></div>
+
+        <label class="mdc-text-field w-50 m-auto mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+          <span class="mdc-notched-outline">
+            <span class="mdc-notched-outline__leading"></span>
+            <span class="mdc-notched-outline__notch">
+              <span class="mdc-floating-label" id="my-label-id">Full Name</span>
+            </span>
+            <span class="mdc-notched-outline__trailing" role="presentation"></span>
+          </span>
+          <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+          <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing" tabindex="0" role="button">event</i>
+        </label>
+
+        <button class="mdc-button w-25 mdc-button--raised">
+          <span class="mdc-button__label">Contained Button</span>
+        </button>
+
+<!-- Footer -->
+<footer style="bottom:0em;" class="bg-dark text-center text-white">
+    <div class="container p-5">
+        <section class="mb-4">
+            <!-- Section: Links -->
+            <section class="">
+                <!--Grid row-->
+                <div class="row">
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-4 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Product</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">Overview</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Integration</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Installation</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Roadmap</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-4 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Company</h5>
+
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="#!" class="text-white">About</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Insider Blog</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Press</a>
+                            </li>
+                            <li>
+                                <a href="#!" class="text-white">Careers</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-4 mb-4 mb-md-0">
+                        <h5 class="text-uppercase">Accessibility</h5>
+                        <ul class="list-unstyled mb-0">
+
+                            <li>
+                                <button data-acsb-custom-trigger="true" style=" background: #76B3FA;
+                  border-radius: 100px;
+                  padding: 10px 30px;
+                  margin: 0 15px;">
+                                    <img style="height: 60px; width: 60px;"
+                                         src="https://image.flaticon.com/icons/png/512/3782/3782771.png">
+                                </button>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+    </div>
+    <div
+            class="text-center p-3"
+            style="background-color: rgba(0, 0, 0, 0.2);"
+    >
+        © 2020 Copyright:
+        <a class="text-white" href="https://mdbootstrap.com/"
+        >Example.com</a
+        >
+    </div>
+    <!-- Copyright -->
+</footer>
+<!-- Footer -->
+<script> (function(){ var s = document.createElement('script'); var h = document.querySelector('head') || document.body; s.src = 'https://acsbapp.com/apps/app/dist/js/app.js'; s.async = true; s.onload = function(){ acsbJS.init({ statementLink : '', footerHtml : '', hideMobile : false, hideTrigger : false, disableBgProcess : false, language : 'en', position : 'right', leadColor : '#146FF8', triggerColor : '#146FF8', triggerRadius : '50%', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerIcon : 'people', triggerSize : 'bottom', triggerOffsetX : 20, triggerOffsetY : 20, mobile : { triggerSize : 'small', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerOffsetX : 20, triggerOffsetY : 20, triggerRadius : '20' } }); }; h.appendChild(s); })();
+</script>
+
+
+
+<script async>
+  const checkExists = setInterval(function () {
+      if (document.querySelectorAll(".acsb-language")[2]) {
+        let selectedLanguage = document.getElementsByClassName("acsb-language")[2];
+        let activeLanguage = document.getElementsByClassName("acsb-language")[0].firstElementChild
+        let selectedLanguageText = selectedLanguage.children[1].textContent
+        let activeLanguageText = document.getElementsByClassName('acsb-language-text')[0].textContent
+        selectedLanguage.firstElementChild.innerHTML=`<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/1920px-Flag_of_Mexico.svg.png" alt="${selectedLanguageText}">`
+        if(selectedLanguageText == activeLanguageText){       
+          activeLanguage.innerHTML=`<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/1920px-Flag_of_Mexico.svg.png" alt="${selectedLanguageText}">`
+        }
+          clearInterval(checkExists);
+      }else{
+      }
+  }, 100);
+</script>
+
+</body>
+</html>
