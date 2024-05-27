@@ -117,6 +117,42 @@
         cursor: pointer;
         border-radius: 12px;
     }
+      .transparent-button {
+          background-color: transparent;
+          color: black;
+      }
+
+      
+    .bgimage-gradient-button-vertical {
+        background-image: linear-gradient(to bottom, #6a11cb, #2575fc);
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 12px;
+    }
+      .btn-new.secondary-dark {
+    --b: 0.125rem;
+    background: linear-gradient(120deg, #c83852, #b44092 25%, #6a5fc1 50%, transparent 55%, transparent);
+    background-clip: padding-box;
+    background-position: 98% 0;
+    background-size: 250% 100%;
+    border: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    color: #fff;
+    outline: 0 solid #fa7faa;
+    outline-offset: .125rem;
+    position: relative;
+    transition: background-position .2s, outline-width .2s;
+    z-index: 0;
+}
 </style>
 </head>
 
@@ -159,8 +195,10 @@ Gradient Buttons
       <button class="gradient-button-radial">Radial Gradient</button>
   </div>
   <div class="container">
-    <button class="gradient-button">Gradient Button</button>
-    <button class="gradient-button-vertical">Vertical Gradient</button>
+      <h2>Buttons with transparent background</h2>
+    <button class="transparent-button"> Transparent Button</button>
+      <a class="btn-new secondary-dark e1of9yu15 css-1csoxiy e1figufi0" href="/demo/"><span class="secondary-dark css-17qgsod e1of9yu11">Sentry Demo Button</span></a>
+    <button class="bgimage-gradient-button-vertical">Image Vertical Gradient</button>
     <button class="gradient-button-diagonal">Diagonal Gradient</button>
     <button class="gradient-button-hover">Hover Gradient</button>
     <button class="gradient-button-radial">Radial Gradient</button>
