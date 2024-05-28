@@ -219,6 +219,70 @@
         .gradient-link-5 {
             background-image: radial-gradient(circle, #ff9a9e, #fad0c4);
         }
+      
+        .gradient-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 12px;
+            padding: 2px;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .gradient-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-size: cover;
+            z-index: 1;
+        }
+
+        .gradient-link {
+            position: relative;
+            display: inline-block;
+            text-decoration: none;
+            border: 2px solid white;
+            border-radius: 12px;
+            padding: 15px 32px;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            background: transparent;
+            z-index: 2;
+        }
+
+        .gradient-link span {
+            color: white;
+        }
+
+        .gradient-wrapper-1::before {
+            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+
+        .gradient-wrapper-2::before {
+            background-image: linear-gradient(to bottom, #6a11cb, #2575fc);
+        }
+
+        .gradient-wrapper-3::before {
+            background-image: linear-gradient(to bottom right, #ff6a00, #ee0979);
+        }
+
+        .gradient-wrapper-4::before {
+            background-image: linear-gradient(to right, #56ccf2, #2f80ed);
+            transition: background-image 0.3s ease;
+        }
+
+        .gradient-wrapper-4:hover::before {
+            background-image: linear-gradient(to right, #2f80ed, #56ccf2);
+        }
+
+        .gradient-wrapper-5::before {
+            background-image: radial-gradient(circle, #ff9a9e, #fad0c4);
+        }
 </style>
 </head>
 
@@ -296,6 +360,24 @@ Gradient Buttons
         <a class="gradient-link gradient-link-3" href="/"><span>Diagonal Gradient</span></a>
         <a class="gradient-link gradient-link-4" href="/"><span>Hover Gradient</span></a>
         <a class="gradient-link gradient-link-5" href="/"><span>Radial Gradient</span></a>
+    </div>
+    <h2>Gradient button with wrapper </h2>
+      <div class="container">
+        <div class="gradient-wrapper gradient-wrapper-1">
+            <a class="gradient-link" href="/"><span>Gradient Button</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-2">
+            <a class="gradient-link" href="/"><span>Vertical Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-3">
+            <a class="gradient-link" href="/"><span>Diagonal Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-4">
+            <a class="gradient-link" href="/"><span>Hover Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-5">
+            <a class="gradient-link" href="/"><span>Radial Gradient</span></a>
+        </div>
     </div>
 </body>
 </html>
