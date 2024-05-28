@@ -178,6 +178,47 @@
     vertical-align: middle;
     white-space: nowrap;
 }
+              .gradient-link {
+            display: inline-block;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 15px 32px;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            background-size: cover;
+        }
+
+        .gradient-link span {
+            color: white;
+        }
+
+        .gradient-link-1 {
+            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+
+        .gradient-link-2 {
+            background-image: linear-gradient(to bottom, #6a11cb, #2575fc);
+        }
+
+        .gradient-link-3 {
+            background-image: linear-gradient(to bottom right, #ff6a00, #ee0979);
+        }
+
+        .gradient-link-4 {
+            background-image: linear-gradient(to right, #56ccf2, #2f80ed);
+            transition: background-image 0.3s ease;
+        }
+
+        .gradient-link-4:hover {
+            background-image: linear-gradient(to right, #2f80ed, #56ccf2);
+        }
+
+        .gradient-link-5 {
+            background-image: radial-gradient(circle, #ff9a9e, #fad0c4);
+        }
 </style>
 </head>
 
@@ -228,5 +269,29 @@ Gradient Buttons
     <button class="gradient-button-hover">Hover Gradient</button>
     <button class="gradient-button-radial">Radial Gradient</button>
 </div>
+<div class="container">
+    <h2>Anchor with gradient and span </h2>
+        <a class="gradient-link gradient-link-1" href="/"><span>Gradient Button</span></a>
+        <a class="gradient-link gradient-link-2" href="/"><span>Vertical Gradient</span></a>
+        <a class="gradient-link gradient-link-3" href="/"><span>Diagonal Gradient</span></a>
+        <a class="gradient-link gradient-link-4" href="/"><span>Hover Gradient</span></a>
+        <a class="gradient-link gradient-link-5" href="/"><span>Radial Gradient</span></a>
+    </div>
+    <div class="container">
+    <h2>Anchor with gradient and span </h2>
+        <a class="gradient-link gradient-link-1" href="/"><span>Gradient Button</span></a>
+        <a class="gradient-link gradient-link-2" href="/"><span>Vertical Gradient</span></a>
+        <a class="gradient-link gradient-link-3" href="/"><span>Diagonal Gradient</span></a>
+        <a class="gradient-link gradient-link-4" href="/"><span>Hover Gradient</span></a>
+        <a class="gradient-link gradient-link-5" href="/"><span>Radial Gradient</span></a>
+    </div>
+    <div class="container">
+        <h2>Gradient using background-image </h2>
+        <a class="gradient-link gradient-link-1" href="/"><span>Gradient Button</span></a>
+        <a class="gradient-link gradient-link-2" href="/"><span>Vertical Gradient</span></a>
+        <a class="gradient-link gradient-link-3" href="/"><span>Diagonal Gradient</span></a>
+        <a class="gradient-link gradient-link-4" href="/"><span>Hover Gradient</span></a>
+        <a class="gradient-link gradient-link-5" href="/"><span>Radial Gradient</span></a>
+    </div>
 </body>
 </html>
