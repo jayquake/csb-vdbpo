@@ -45,98 +45,46 @@
             padding: 20px;
         }
 
-        .gradient-button,
-        .gradient-button-vertical,
-        .gradient-button-diagonal,
-        .gradient-button-hover,
-        .gradient-button-radial {
-            border: none;
-            color: white;
+        .gradient-link {
+            display: inline-block;
+            text-decoration: none;
+            border-radius: 12px;
             padding: 15px 32px;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
+            color: white;
             font-size: 16px;
             margin: 4px 2px;
             cursor: pointer;
-            border-radius: 12px;
+            background-size: cover;
         }
 
-        .gradient-button {
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+        .gradient-link span {
+            color: white;
         }
 
-        .gradient-button-vertical {
-            background: linear-gradient(to bottom, #6a11cb, #2575fc);
+        .gradient-link-1 {
+            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
         }
 
-        .gradient-button-diagonal {
-            background: linear-gradient(to bottom right, #ff6a00, #ee0979);
-        }
-
-        .gradient-button-hover {
-            background: linear-gradient(to right, #56ccf2, #2f80ed);
-            transition: background 0.3s ease;
-        }
-
-        .gradient-button-hover:hover {
-            background: linear-gradient(to right, #2f80ed, #56ccf2);
-        }
-
-        .gradient-button-radial {
-            background: radial-gradient(circle, #ff9a9e, #fad0c4);
-        }
-
-        .transparent-button {
-            background-color: transparent;
-            color: black;
-        }
-
-        .bgimage-gradient-button-vertical {
+        .gradient-link-2 {
             background-image: linear-gradient(to bottom, #6a11cb, #2575fc);
         }
 
-        .btn-new.secondary-dark {
-            --b: 0.125rem;
-            background: linear-gradient(120deg, #c83852, #b44092 25%, #6a5fc1 50%, transparent 55%, transparent);
-            background-clip: padding-box;
-            background-position: 98% 0;
-            background-size: 250% 100%;
-            border: none;
-            box-shadow: none;
-            box-sizing: border-box;
-            color: #fff;
-            outline: 0 solid #fa7faa;
-            outline-offset: .125rem;
-            position: relative;
-            transition: background-position .2s, outline-width .2s;
-            z-index: 0;
+        .gradient-link-3 {
+            background-image: linear-gradient(to bottom right, #ff6a00, #ee0979);
         }
 
-        .btn-new {
-            align-items: center;
-            border: .125rem solid transparent;
-            border-radius: .5rem;
-            box-sizing: border-box;
-            cursor: pointer;
-            display: inline-flex;
-            font-size: .875rem;
-            font-style: normal;
-            font-weight: 700;
-            gap: .25rem;
-            height: 2.5rem;
-            justify-content: center;
-            line-height: 1rem;
-            outline: 0;
-            padding: .75rem 1rem;
-            position: relative;
-            text-align: center;
-            text-rendering: optimizeLegibility;
-            text-transform: uppercase;
-            -webkit-user-select: none;
-            user-select: none;
-            vertical-align: middle;
-            white-space: nowrap;
+        .gradient-link-4 {
+            background-image: linear-gradient(to right, #56ccf2, #2f80ed);
+            transition: background-image 0.3s ease;
+        }
+
+        .gradient-link-4:hover {
+            background-image: linear-gradient(to right, #2f80ed, #56ccf2);
+        }
+
+        .gradient-link-5 {
+            background-image: radial-gradient(circle, #ff9a9e, #fad0c4);
         }
 
         .gradient-wrapper {
@@ -160,7 +108,7 @@
             z-index: 1;
         }
 
-        .gradient-link {
+        .gradient-link-wrapper {
             position: relative;
             display: inline-block;
             text-decoration: none;
@@ -174,7 +122,7 @@
             z-index: 2;
         }
 
-        .gradient-link span {
+        .gradient-link-wrapper span {
             color: white;
         }
 
@@ -237,22 +185,24 @@
 </div>
 
 <div class="container">
-    <button class="gradient-button">Gradient Button</button>
-    <button class="gradient-button-vertical">Vertical Gradient</button>
-    <button class="gradient-button-diagonal">Diagonal Gradient</button>
-    <button class="gradient-button-hover">Hover Gradient</button>
-    <button class="gradient-button-radial">Radial Gradient</button>
+    <button class="gradient-link gradient-link-1"><span>Gradient Button</span></button>
+    <button class="gradient-link gradient-link-2"><span>Vertical Gradient</span></button>
+    <button class="gradient-link gradient-link-3"><span>Diagonal Gradient</span></button>
+    <button class="gradient-link gradient-link-4"><span>Hover Gradient</span></button>
+    <button class="gradient-link gradient-link-5"><span>Radial Gradient</span></button>
 </div>
+
 <h2>Buttons with transparent background</h2>
 
 <div class="container">
     <button class="transparent-button">Transparent Button</button>
-    <a class="btn-new secondary-dark gradient-button-diagonal" href="/demo/"><span>Sentry Demo Button</span></a>
-    <button class="bgimage-gradient-button-vertical">Image Vertical Gradient</button>
-    <button class="gradient-button-diagonal">Diagonal Gradient</button>
-    <button class="gradient-button-hover">Hover Gradient</button>
-    <button class="gradient-button-radial">Radial Gradient</button>
+    <a class="btn-new secondary-dark gradient-link-3" href="/demo/"><span>Sentry Demo Button</span></a>
+    <button class="gradient-link gradient-link-2">Image Vertical Gradient</button>
+    <button class="gradient-link gradient-link-3">Diagonal Gradient</button>
+    <button class="gradient-link gradient-link-4">Hover Gradient</button>
+    <button class="gradient-link gradient-link-5">Radial Gradient</button>
 </div>
+
 <h2>Anchor with gradient and span</h2>
 
 <div class="container">
@@ -262,6 +212,7 @@
     <a class="gradient-link gradient-link-4" href="/"><span>Hover Gradient</span></a>
     <a class="gradient-link gradient-link-5" href="/"><span>Radial Gradient</span></a>
 </div>
+
 <h2>Gradient using background-image</h2>
 
 <div class="container">
@@ -271,22 +222,24 @@
     <a class="gradient-link gradient-link-4" href="/"><span>Hover Gradient</span></a>
     <a class="gradient-link gradient-link-5" href="/"><span>Radial Gradient</span></a>
 </div>
+
 <h2>Gradient button with wrapper</h2>
+
 <div class="container">
     <div class="gradient-wrapper gradient-wrapper-1">
-        <a class="gradient-link" href="/"><span>Gradient Button</span></a>
+        <a class="gradient-link-wrapper" href="/"><span>Gradient Button</span></a>
     </div>
     <div class="gradient-wrapper gradient-wrapper-2">
-        <a class="gradient-link" href="/"><span>Vertical Gradient</span></a>
+        <a class="gradient-link-wrapper" href="/"><span>Vertical Gradient</span></a>
     </div>
     <div class="gradient-wrapper gradient-wrapper-3">
-        <a class="gradient-link" href="/"><span>Diagonal Gradient</span></a>
+        <a class="gradient-link-wrapper" href="/"><span>Diagonal Gradient</span></a>
     </div>
     <div class="gradient-wrapper gradient-wrapper-4">
-        <a class="gradient-link" href="/"><span>Hover Gradient</span></a>
+        <a class="gradient-link-wrapper" href="/"><span>Hover Gradient</span></a>
     </div>
     <div class="gradient-wrapper gradient-wrapper-5">
-        <a class="gradient-link" href="/"><span>Radial Gradient</span></a>
+        <a class="gradient-link-wrapper" href="/"><span>Radial Gradient</span></a>
     </div>
 </div>
 </body>
