@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .gradient-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 12px;
+            padding: 2px;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .gradient-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-size: cover;
+            z-index: 1;
+        }
+
+        .gradient-link {
+            position: relative;
+            display: inline-block;
+            text-decoration: none;
+            border: 2px solid white;
+            border-radius: 12px;
+            padding: 15px 32px;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            background: transparent;
+            z-index: 2;
+        }
+
+        .gradient-link span {
+            color: white;
+        }
+
+        .gradient-wrapper-1::before {
+            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+
+        .gradient-wrapper-2::before {
+            background-image: linear-gradient(to bottom, #6a11cb, #2575fc);
+        }
+
+        .gradient-wrapper-3::before {
+            background-image: linear-gradient(to bottom right, #ff6a00, #ee0979);
+        }
+
+        .gradient-wrapper-4::before {
+            background-image: linear-gradient(to right, #56ccf2, #2f80ed);
+            transition: background-image 0.3s ease;
+        }
+
+        .gradient-wrapper-4:hover::before {
+            background-image: linear-gradient(to right, #2f80ed, #56ccf2);
+        }
+
+        .gradient-wrapper-5::before {
+            background-image: radial-gradient(circle, #ff9a9e, #fad0c4);
+        }
+
+        .gradient-wrapper-6::before {
+            background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
+        }
+
+        .gradient-wrapper-7::before {
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-wrapper-8::before {
+            background-image: linear-gradient(225deg, #89f7fe 0%, #66a6ff 100%);
+        }
+
+        .gradient-wrapper-9::before {
+            background-image: linear-gradient(315deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        .gradient-wrapper-10::before {
+            background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-info">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand" href="#">Button Gradients</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/csb-vdbpo/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/csb-vdbpo/page4.html">Gradient Buttons</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/csb-vdbpo/page3.html" tabindex="-1" aria-disabled="true">More Gradient Buttons</a>
+                </li>
+            </ul>
+            <button class="btn btn-outline-dark ml-auto" type="submit">Regular button</button>
+        </div>
+    </div>
+</nav>
+
+<div class="card text-center">
+    <div class="card-header lead " >
+Gradient Buttons
+    </div>
+    </div>
+    <div class="container">
+        <div class="gradient-wrapper gradient-wrapper-1">
+            <a class="gradient-link" href="/"><span>Gradient Button</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-2">
+            <a class="gradient-link" href="/"><span>Vertical Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-3">
+            <a class="gradient-link" href="/"><span>Diagonal Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-4">
+            <a class="gradient-link" href="/"><span>Hover Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-5">
+            <a class="gradient-link" href="/"><span>Radial Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-6">
+            <a class="gradient-link" href="/"><span>Angular Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-7">
+            <a class="gradient-link" href="/"><span>Purple Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-8">
+            <a class="gradient-link" href="/"><span>Cool Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-9">
+            <a class="gradient-link" href="/"><span>Soft Gradient</span></a>
+        </div>
+        <div class="gradient-wrapper gradient-wrapper-10">
+            <a class="gradient-link" href="/"><span>Top Gradient</span></a>
+        </div>
+    </div>
+    
+</body>
+</html>
