@@ -1,163 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARIA Label and ARIA-labelledby Examples</title>
+  </head>
+  <body>
+    <h2>ARIA Label Successes</h2>
+    <div id="aria-label-successes">
+      <!-- Button with ARIA Label (Success) -->
+      <button aria-label="Submit this form button">Submit</button>
 
-        .gradient-wrapper {
-            position: relative;
-            display: inline-block;
-            border-radius: 12px;
-            padding: 2px;
-            text-align: center;
-            cursor: pointer;
-            overflow: hidden;
-            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
+      <!-- Image with Content Description (Success) -->
+      <img
+        src="image.jpg"
+        alt="A beautiful sunset"
+        aria-label="Image: A beautiful sunset"
+      />
 
-        }
+      <!-- Link with ARIA Label (Success) -->
+      <a href="#" aria-label="Learn More">Learn More</a>
 
-        .gradient-wrapper::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background-size: cover;
-            z-index: 1;
-        }
+      <!-- Paragraph with ARIA Label (Success) -->
+      <p aria-label="Important Information">This is important information.</p>
 
-        .gradient-link {
-            position: relative;
-            display: inline-block;
-            text-decoration: none;
-            border: 2px solid white;
-            border-radius: 12px;
-            padding: 15px 32px;
-            text-align: center;
-            color: white;
-            font-size: 16px;
-            background: transparent;
-            z-index: 2;
-        }
+      <!-- Input Field with ARIA Label (Success) -->
+      <label for="inputField">Enter your name:</label>
+      <input type="text" id="inputField" aria-label="Name input field" />
 
-        .gradient-link span {
-            color: white;
-        }
+      <!-- List with ARIA Label (Success) -->
+      <ul aria-label="Fruits List">
+        <li>Apple</li>
+        <li>Banana</li>
+        <li>Cherry</li>
+      </ul>
 
-        .gradient-wrapper-1::before {
-            background-image: linear-gradient(to right, #ff7e5f, #feb47b);
-        }
+      <!-- Success 1: Button with ARIA Label (Content Included) -->
+      <button aria-label="Submit this form button">Submit</button>
 
-        .gradient-wrapper-2::before {
-            background-image: linear-gradient(to bottom, #6a11cb, #2575fc);
-        }
+      <!-- Success 2: Image with ARIA Label (Content Included) -->
+      <img
+        src="image.jpg"
+        alt="A beautiful sunset"
+        aria-label="Image: A beautiful sunset"
+      />
 
-        .gradient-wrapper-3::before {
-            background-image: linear-gradient(to bottom right, #ff6a00, #ee0979);
-        }
+      <!-- Success 3: Link with ARIA Label (Content Included) -->
+      <a href="#" aria-label="Learn more about our products">Click here</a>
 
-        .gradient-wrapper-4::before {
-            background-image: linear-gradient(to right, #56ccf2, #2f80ed);
-            transition: background-image 0.3s ease;
-        }
+      <!-- Success 4: Paragraph with ARIA Label (Content Included) -->
+      <p aria-label="A detailed description of a beautiful flower">
+        A beautiful flower
+      </p>
 
-        .gradient-wrapper-4:hover::before {
-            background-image: linear-gradient(to right, #2f80ed, #56ccf2);
-        }
+      <!-- Success 5: Heading with ARIA Label (Content Included) -->
+      <h1 aria-label="Main heading for the website">Welcome to Our Website</h1>
 
-        .gradient-wrapper-5::before {
-            background-image: radial-gradient(circle, #ff9a9e, #fad0c4);
-        }
-
-        .gradient-wrapper-6::before {
-            background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
-        }
-
-
-        .gradient-wrapper-8::before {
-            background-image: linear-gradient(225deg, #89f7fe 0%, #66a6ff 100%);
-        }
-
-        .gradient-wrapper-9::before {
-            background-image: linear-gradient(315deg, #ff9a9e 0%, #fecfef 100%);
-        }
-
-        .gradient-wrapper-10::before {
-            background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
-        }
-    </style>
-</head>
-
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-info">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
-                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" href="#">Button Gradients</a>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/csb-vdbpo/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/csb-vdbpo/gradientfp.html">Gradient Buttons</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/csb-vdbpo/page3.html" tabindex="-1" aria-disabled="true">More Gradient Buttons</a>
-                </li>
-            </ul>
-            <button class="btn btn-outline-dark ml-auto" type="submit">Regular button</button>
-        </div>
+      <!-- Success 6: Checkbox with ARIA Label (Content Included) -->
+      <input
+        type="checkbox"
+        id="agree"
+        aria-label="Agree to terms and conditions"
+      />
+      <label for="agree">I agree to the terms and conditions</label>
     </div>
-</nav>
 
-<div class="card text-center">
-    <div class="card-header lead " >
-Gradient Buttons
+    <div>
+      <h2>ARIA-labelledby Successes</h2>
+
+      <!-- Button with ARIA-labelledby (Success) -->
+      <button aria-labelledby="buttonLabel">Submit</button>
+      <div id="buttonLabel">Submit this form button</div>
+
+      <!-- Image with ARIA-labelledby (Success) -->
+      <img
+        src="image.jpg"
+        alt="A beautiful sunset"
+        aria-labelledby="imageLabel"
+      />
+      <div id="imageLabel">Image: A beautiful sunset</div>
+
+      <!-- Link with ARIA-labelledby (Success) -->
+      <a href="#" aria-labelledby="linkLabel">Click here</a>
+      <div id="linkLabel">Learn more about our products</div>
+
+      <!-- Paragraph with ARIA-labelledby (Success) -->
+      <p aria-labelledby="infoLabel">Important Information</p>
+      <div id="infoLabel">This is some important information.</div>
+
+      <!-- Input Field with ARIA-labelledby (Success) -->
+      <label for="inputField">Enter your name:</label>
+      <input type="text" id="inputField" aria-labelledby="inputLabel" />
+      <div id="inputLabel">Name input field</div>
+
+      <!-- List with ARIA-labelledby (Success) -->
+      <ul aria-labelledby="listLabel">
+        <li>Apple</li>
+        <li>Banana</li>
+        <li>Cherry</li>
+      </ul>
+      <div id="listLabel">Fruits List</div>
     </div>
+
+    <hr />
+    <div id="aria-failures">
+      <h2>ARIA Label Failures</h2>
+      <!-- Failure 1: Button with ARIA Label Omitting Content Text -->
+      <button aria-label="Submit">Submit</button>
+
+      <!-- Failure 2: Image with ARIA Label Omitting Content Description -->
+      <img
+        src="image.jpg"
+        alt="A beautiful sunset"
+        aria-label="A beautiful sunset"
+      />
+
+      <!-- Failure 3: Link with ARIA Label Omitting Content Text -->
+      <a href="#" aria-label="Learn more">Click here</a>
+
+      <!-- Failure 4: Paragraph with ARIA Label Omitting Content Text -->
+      <p aria-label="Description">A beautiful flower</p>
+
+      <!-- Failure 5: Heading with ARIA Label Omitting Content Text -->
+      <h1 aria-label="Heading">Welcome to Our Website</h1>
+
+      <!-- Failure 6: Checkbox with ARIA Label Omitting Content Text -->
+      <input type="checkbox" id="disagree" aria-label="Agree" />
+      <label for="disagree">I disagree to the terms and conditions</label>
+      <!-- Button with ARIA Label Omitting Content Text (Failure) -->
+      <button aria-label="Submit">Submit</button>
+
+      <!-- Image with ARIA Label Omitting Content Description (Failure) -->
+      <img
+        src="image.jpg"
+        alt="A beautiful sunset"
+        aria-label="A beautiful sunset"
+      />
+
+      <!-- Link with ARIA Label Omitting Content Text (Failure) -->
+      <a href="#" aria-label="Learn More">Click here</a>
+
+      <!-- Paragraph with ARIA Label Omitting Content Text (Failure) -->
+      <p aria-label="Important Information">This is some information.</p>
+
+      <!-- Input Field with ARIA Label Omitting Content Text (Failure) -->
+      <label for="inputField">Enter your name:</label>
+      <input type="text" id="inputField" aria-label="Input field" />
+
+      <!-- List with ARIA Label Omitting Content Text (Failure) -->
+      <ul aria-label="List">
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+      </ul>
+
+      <h2>ARIA-labelledby Failures</h2>
+
+      <!-- Button with ARIA-labelledby Omitting Content Text (Failure) -->
+      <button aria-labelledby="buttonLabel">Submit</button>
+      <div id="buttonLabel">Submit</div>
+
+      <!-- Image with ARIA-labelledby Omitting Content Description (Failure) -->
+      <img
+        src="image.jpg"
+        alt="A beautiful sunset"
+        aria-labelledby="imageLabel"
+      />
+      <div id="imageLabel">A beautiful sunset</div>
+
+      <!-- Link with ARIA-labelledby Omitting Content Text (Failure) -->
+      <a href="#" aria-labelledby="linkLabel">Click here</a>
+      <div id="linkLabel">Learn more</div>
+
+      <!-- Paragraph with ARIA-labelledby Omitting Content Text (Failure) -->
+      <p aria-labelledby="infoLabel">This is some information.</p>
+      <div id="infoLabel">Important Information</div>
+
+      <!-- Input Field with ARIA-labelledby Omitting Content Text (Failure) -->
+      <label for="inputField">Enter your name:</label>
+      <input type="text" id="inputField" aria-labelledby="inputLabel" />
+      <div id="inputLabel">Input field</div>
+
+      <!-- List with ARIA-labelledby Omitting Content Text (Failure) -->
+      <ul aria-labelledby="listLabel">
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+      </ul>
+      <div id="listLabel">List</div>
     </div>
-    <div class="container">
-        <div class="gradient-wrapper gradient-wrapper-1">
-            <a class="gradient-link" href="/"><span>Gradient Button</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-2">
-            <a class="gradient-link" href="/"><span>Vertical Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-3">
-            <a class="gradient-link" href="/"><span>Diagonal Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-4">
-            <a class="gradient-link" href="/"><span>Hover Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-5">
-            <a class="gradient-link" href="/"><span>Radial Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-6">
-            <a class="gradient-link" href="/"><span>Angular Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-7">
-            <a class="gradient-link" href="/"><span>Purple Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-8">
-            <a class="gradient-link" href="/"><span>Cool Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-9">
-            <a class="gradient-link" href="/"><span>Soft Gradient</span></a>
-        </div>
-        <div class="gradient-wrapper gradient-wrapper-10">
-            <a class="gradient-link" href="/"><span>Top Gradient</span></a>
-        </div>
+
+    <div class="icons" role="button" aria-label="open modal to show cd rate">
+      <span
+        class="cdrate-icon"
+        data-toggle="modal"
+        tabindex="0"
+        data-target="#myModal3"
+        aria-label="open modal to show cd rate"
+      >
+        <i class="fa fa-bar-chart fa-3x fa-fw" aria-hidden="true"></i>
+      </span>
+      <!--<h2 class="clientsheader">Great CD Rate</h2> -->
+      <p>Great CD Rate (Text Overwritten on screen reader)</p>
     </div>
-    
-</body>
+    <div aria-label="aria Text Here for Screen Readers">
+      <p>My Descriptive Paragraph Text Housed in another Div that has a</p>
+    </div>
+
+    <div class="text-center">
+      <div class="icons" role="button">
+        <span
+          class="cdrate-icon"
+          data-toggle="modal"
+          tabindex="0"
+          data-target="#myModal3"
+          aria-label="open modal to show cd rate"
+        >
+          <i class="fa fa-bar-chart fa-3x fa-fw" aria-hidden="true"></i>
+        </span>
+        <!--<h2 class="clientsheader">Great CD Rate</h2> -->
+        <p>Great CD Rate</p>
+      </div>
+    </div>
+
+    <div class="carousel-caption">
+      <h2>
+        <i>Zelle</i><sup>®</sup> <span><br />Fast, Secure, No Fee</span
+        ><br />The Excellent Money App<br />
+        <a
+          href="./Zelle/index.html"
+          aria-label="Start Zelle"
+          class="btn-start"
+          role="button"
+          >Get Started</a
+        >
+      </h2>
+    </div>
+  </body>
 </html>
