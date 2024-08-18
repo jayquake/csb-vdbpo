@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WCAG Color Contrast Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .text-small {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .text-large {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WCAG Color Contrast Test</h1>
+
+    <h2>Passes WCAG Color Contrast Rule</h2>
+    <p id="pass-small-1" class="text-small" style="color: #000000; background-color: #FFFFFF;">
+        This is a small text with high contrast (black on white). This should pass the WCAG color contrast rule.
+    </p>
+    <p id="pass-small-2" class="text-small" style="color: #00008B; background-color: #FFFFFF;">
+        This is a small text with high contrast (dark blue on white). This should pass the WCAG color contrast rule.
+    </p>
+    <p id="pass-large-1" class="text-large" style="color: #000000; background-color: #FFFFFF;">
+        This is a large text with high contrast (black on white). This should pass the WCAG color contrast rule.
+    </p>
+    <p id="pass-large-2" class="text-large" style="color: #006400; background-color: #FFFFE0;">
+        This is a large text with high contrast (dark green on light yellow). This should pass the WCAG color contrast rule.
+    </p>
+    <div id="pass-background-1" style="background-color: #EEEEEE; padding: 10px;">
+        <p class="text-small" style="color: #000000; background-color: #FFFFFF;">
+            This text has a high contrast ratio with the direct background, but the container is within a different background.
+        </p>
+    </div>
+    <p id="pass-small-3" class="text-small" style="color: #8B0000; background-color: #D3D3D3;">
+        This is a small text with high contrast (dark red on light gray). This should pass the WCAG color contrast rule.
+    </p>
+
+    <hr>
+
+    <h2>Fails WCAG Color Contrast Rule</h2>
+    <p id="fail-small-1" class="text-small" style="color: #767676; background-color: #CCCCCC;">
+        This is a small text with low contrast (gray on light gray). This should fail the WCAG color contrast rule.
+    </p>
+    <p id="fail-small-2" class="text-small" style="color: #ADD8E6; background-color: #FFFFFF;">
+        This is a small text with low contrast (light blue on white). This should fail the WCAG color contrast rule.
+    </p>
+    <p id="fail-large-1" class="text-large" style="color: #767676; background-color: #CCCCCC;">
+        This is a large text with low contrast (gray on light gray). This may fail the WCAG color contrast rule, depending on the ratio.
+    </p>
+    <p id="fail-large-2" class="text-large" style="color: #90EE90; background-color: #FFFFE0;">
+        This is a large text with low contrast (light green on light yellow). This should fail the WCAG color contrast rule.
+    </p>
+    <div id="fail-container-1" style="border: 1px solid #000000; padding: 10px; background-color: #FFFFFF;">
+        <p class="text-small" style="color: #767676;">
+            This is a small text with low contrast, but inside a bordered container with a white background.
+        </p>
+    </div>
+    <div id="fail-background-1" style="background-color: #EEEEEE; padding: 10px;">
+        <p class="text-small" style="color: #767676; background-color: #CCCCCC;">
+            This text has a low contrast ratio with its direct background and the outer background. It should fail the contrast rule.
+        </p>
+    </div>
+    <p id="fail-small-3" class="text-small" style="color: #FFB6C1; background-color: #FFFFFF;">
+        This is a small text with low contrast (light pink on white). This should fail the WCAG color contrast rule.
+    </p>
+
+</body>
+</html>
